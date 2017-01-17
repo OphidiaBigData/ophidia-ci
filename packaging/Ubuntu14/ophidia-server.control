@@ -1,0 +1,10 @@
+Package: ophidia-server
+Version: **VERSION**-**RELEASE**
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libjansson4 (>= 2.4), libmysqlclient18, libxml2 (>= 2.9), libcurl3 (>= 7.29), libssl1.0.0 (>= 1.0.1e), libssh2-1 (>= 1.4.2) 
+Maintainer: Ophidia Team <ophidia-info@lists.cmcc.it>
+Homepage: http://ophidia.cmcc.it
+Description: Ophidia Server
+ Ophidia server, a service responsible for managing client requests and workflows of Ophidia operators.
