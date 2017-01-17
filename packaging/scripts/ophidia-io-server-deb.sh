@@ -47,6 +47,8 @@ mkdir -p /usr/local/ophidia/oph-cluster/oph-io-server/data1/{log,var}
 #Remove unnecessary dirs
 rm -rf /usr/local/ophidia/oph-cluster/oph-io-server/{log,var}
 
+mkdir -p ${pkg_path}/${pkg_name}_${version}-${release}_amd64/DEBIAN
+
 copy_control ${pkg_path} ${pkg_name} ${version} ${release} ${control_path}
 
 cp -r --parents /usr/local/ophidia/oph-cluster/oph-io-server ${pkg_path}/${pkg_name}_${version}-${release}_amd64

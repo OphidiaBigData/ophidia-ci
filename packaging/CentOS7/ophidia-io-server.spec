@@ -10,6 +10,8 @@ Source0:      https://github.com/OphidiaBigData/ophidia-io-server/
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Prefix:       /usr/local
 Requires:     mysql-community-libs >= 5.6.22, ophidia-primitives
+Requires(post): /bin/sh
+Requires(postun): /bin/sh
 
 %description
 Ophidia native IO server module to perform I/O and queries on multidimensional data.
@@ -18,7 +20,10 @@ Ophidia native IO server module to perform I/O and queries on multidimensional d
 %defattr(-,root,root,-)
 %license /usr/local/ophidia/oph-cluster/oph-io-server/share/LICENSE 
 %license /usr/local/ophidia/oph-cluster/oph-io-server/share/NOTICE.md
-/usr/local/ophidia/oph-cluster/oph-io-server
+/usr/local/ophidia/oph-cluster/oph-io-server/bin
+/usr/local/ophidia/oph-cluster/oph-io-server/etc
+/usr/local/ophidia/oph-cluster/oph-io-server/lib
+/usr/local/ophidia/oph-cluster/oph-io-server/include
 %dir /usr/local/ophidia/oph-cluster/oph-io-server/data1/log
 %dir /usr/local/ophidia/oph-cluster/oph-io-server/data1/var
 

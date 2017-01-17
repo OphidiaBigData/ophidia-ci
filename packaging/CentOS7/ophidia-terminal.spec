@@ -10,6 +10,8 @@ Source0:      https://github.com/OphidiaBigData/ophidia-terminal/
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Prefix:       /usr/local
 Requires:     epel-release, jansson >= 2.4, graphviz >= 2.26.0, gtk2 >= 2.24.23, libxml2 >= 2.7, libcurl >= 7.19, openssl >= 1.0.1e, readline >= 6.0
+Requires(post): /bin/sh
+Requires(postun): /bin/sh
  
 %description
 Ophidia terminal, an advanced CLI to send requests and workflows to the Ophidia server.

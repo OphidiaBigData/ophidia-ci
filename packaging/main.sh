@@ -48,7 +48,7 @@ case "${distro}" in
         exit 1
 esac
 
-PACKAGES=("terminal" "analytics-framework" "primitives" "server" "io-server")
+PACKAGES=("terminal" "primitives" "io-server" "analytics-framework" "server")
 
 if [ ${dist} = 'el7.centos' ]; then
 	# For centos linux setup rpmbuild paths
@@ -99,7 +99,7 @@ elif [ ${dist} = 'debian' ]; then
 	}
 
 	#Build DEBS
-	if [ "${package}" = "terminal" ] || [ "${package}" = "analytics-framework" ] || [ "${package}" = "primitives" ] || [ "${package}" = "server" ] || [ "${package}" = "io-server" ] || [ $# -eq 2 ]; then
+	if [ "${package}" = "terminal" ] || [ "${package}" = "analytics-framework" ] || [ "${package}" = "primitives" ] || [ "${package}" = "server" ] || [ "${package}" = "io-server" ]; then
 		run_packaging_script_debian "${package}"
 	elif [ $# -eq 2 ]; then
 		for p in ${PACKAGES[@]}; do
@@ -115,5 +115,5 @@ fi
 #Remove any remaining file
 rm -rf ${pkg_path}/sources
 rm -rf /usr/local/ophidia/{oph-cluster,oph-server,oph-terminal}
-rm -rf /var/www/html/ophidia
+rm -rf /var/www/html/ophidia/*
 

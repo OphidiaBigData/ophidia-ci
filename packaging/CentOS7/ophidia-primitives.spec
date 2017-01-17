@@ -19,4 +19,5 @@ Ophidia libraries implementing array-based primitives to be plugged into IO serv
 %defattr(-,root,root,-)
 %license /usr/local/ophidia/oph-cluster/oph-primitives/share/LICENSE 
 %license /usr/local/ophidia/oph-cluster/oph-primitives/share/NOTICE.md
-/usr/local/ophidia/oph-cluster/oph-primitives
+/usr/local/ophidia/oph-cluster/oph-primitives/etc
+/usr/local/ophidia/oph-cluster/oph-primitives/lib

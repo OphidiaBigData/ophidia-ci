@@ -11,6 +11,8 @@ BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Prefix:       /usr/local
 Requires:     mysql-community-libs >= 5.6.22, libxml2 >= 2.7, libcurl >= 7.19, openssl >= 1.0.1e, libssh2 >= 1.4.2, epel-release, jansson >= 2.4
 AutoReqProv:  no
+Requires(post): /bin/sh
+Requires(postun): /bin/sh
 
 %description
 Ophidia server, a service responsible for managing client requests and workflows of Ophidia operators.
@@ -19,7 +21,12 @@ Ophidia server, a service responsible for managing client requests and workflows
 %defattr(-,root,root,-)
 %license /usr/local/ophidia/oph-server/share/LICENSE 
 %license /usr/local/ophidia/oph-server/share/NOTICE.md
-/usr/local/ophidia/oph-server
+/usr/local/ophidia/oph-server/authz
+/usr/local/ophidia/oph-server/bin
+/usr/local/ophidia/oph-server/etc
+/usr/local/ophidia/oph-server/lib
+/usr/local/ophidia/oph-server/log
+/usr/local/ophidia/oph-server/txt
 /var/www/html/ophidia/env.php
 /var/www/html/ophidia/header.php
 /var/www/html/ophidia/index.php
