@@ -136,7 +136,7 @@ mysql -u root ophidiadb < /usr/local/ophidia/oph-cluster/oph-analytics-framework
 echo "INSERT INTO host (hostname, cores, memory) VALUES ('127.0.0.1', 1, 1);" | mysql -u root ophidiadb
 echo "INSERT INTO dbmsinstance (idhost, login, password, port) VALUES (1, 'root', 'abcd', 3306);" | mysql -u root ophidiadb
 echo "INSERT INTO hostpartition (partitionname) VALUES ('test');" | mysql -u root ophidiadb
-echo "INSERT INTO hashost VALUES (1,1);" | mysql -u root ophidiadb
+echo "INSERT INTO hashost (idhostpartition,idhost) VALUES (1,1);" | mysql -u root ophidiadb
 
 # Start Ophidia Server
 
