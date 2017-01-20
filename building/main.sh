@@ -42,6 +42,18 @@ if [ "${package}" == "primitives" ] || [ $# -eq 1 ]; then
 	make install -s > /dev/null
 fi
 
+# ophidia-io-server installation
+if [ "${package}" == "io-server" ] || [ $# -eq 1 ]; then
+	cd /usr/local/ophidia/src
+	git clone https://github.com/OphidiaBigData/ophidia-io-server
+	cd /usr/local/ophidia/src/ophidia-io-server
+	git checkout ${buildtype}
+	./bootstrap
+	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server > /dev/null
+	make -s > /dev/null
+	make install -s > /dev/null
+fi
+
 # ophidia-analytics-framework installation
 if [ "${package}" == "analytics-framework" ] || [ $# -eq 1 ]; then
 	cd /usr/local/ophidia/src
@@ -49,7 +61,7 @@ if [ "${package}" == "analytics-framework" ] || [ $# -eq 1 ]; then
 	cd /usr/local/ophidia/src/ophidia-analytics-framework
 	git checkout ${buildtype}
 	./bootstrap
-	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-analytics-framework --enable-parallel-netcdf --with-netcdf-path=/usr/local/ophidia/extra --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia > /dev/null
+	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-analytics-framework --enable-parallel-netcdf --with-netcdf-path=/usr/local/ophidia/extra --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia --with-ophidiaio-server-path=/usr/local/ophidia/oph-cluster/oph-io-server > /dev/null
 	make -s > /dev/null
 	make install -s > /dev/null
 fi
@@ -74,18 +86,6 @@ if [ "${package}" == "terminal" ] || [ $# -eq 1 ]; then
 	git checkout ${buildtype}
 	./bootstrap
 	./configure --prefix=/usr/local/ophidia/oph-terminal > /dev/null
-	make -s > /dev/null
-	make install -s > /dev/null
-fi
-
-# ophidia-io-server installation
-if [ "${package}" == "io-server" ] || [ $# -eq 1 ]; then
-	cd /usr/local/ophidia/src
-	git clone https://github.com/OphidiaBigData/ophidia-io-server
-	cd /usr/local/ophidia/src/ophidia-io-server
-	git checkout ${buildtype}
-	./bootstrap
-	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server > /dev/null
 	make -s > /dev/null
 	make install -s > /dev/null
 fi

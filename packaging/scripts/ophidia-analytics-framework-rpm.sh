@@ -48,9 +48,6 @@ mkdir -p /usr/local/ophidia/oph-cluster/oph-analytics-framework/log
 #Remove unnecessary dirs
 rm -rf /usr/local/ophidia/oph-cluster/oph-analytics-framework/include
 
-#Copy configuration files
-cp -r ${pkg_path}/common/oph-analytics-framework/etc/* /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/
-
 copy_spec ${pkg_path} ${pkg_name} ${version} ${release} ${dist} ${spec_path}
 
 mkdir ${pkg_path}/rpmbuild/BUILDROOT/${pkg_name}-${version}-${release}.${dist}.x86_64

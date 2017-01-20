@@ -47,9 +47,6 @@ mkdir -p /usr/local/ophidia/oph-cluster/oph-analytics-framework/log
 #Remove unnecessary dirs
 rm -rf /usr/local/ophidia/oph-cluster/oph-analytics-framework/include
 
-#Copy configuration files
-cp -r ${pkg_path}/common/oph-analytics-framework/etc/* /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/
-
 mkdir -p ${pkg_path}/${pkg_name}_${version}-${release}_amd64/DEBIAN
 
 copy_control ${pkg_path} ${pkg_name} ${version} ${release} ${control_path}
