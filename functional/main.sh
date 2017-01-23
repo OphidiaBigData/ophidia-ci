@@ -134,14 +134,20 @@ echo "create database ophidiadb;" | mysql -u root
 echo "create database oph_dimensions;" | mysql -u root
 mysql -u root ophidiadb < /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/ophidiadb.sql
 echo "INSERT INTO host (hostname, cores, memory) VALUES ('127.0.0.1', 1, 1);" | mysql -u root ophidiadb
-echo "INSERT INTO dbmsinstance (idhost, login, password, port) VALUES (1, 'root', 'abcd', 3306);" | mysql -u root ophidiadb
 echo "INSERT INTO hostpartition (partitionname) VALUES ('test');" | mysql -u root ophidiadb
 echo "INSERT INTO hashost (idhostpartition,idhost) VALUES (1,1);" | mysql -u root ophidiadb
+echo "INSERT INTO dbmsinstance (idhost, login, password, port) VALUES (1, 'root', 'abcd', 3306);" | mysql -u root ophidiadb
+echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VALUES (1, 'root', 'abcd', 65000, 'ophidiaio_memory');" | mysql -u root ophidiadb
 
 # Start Ophidia Server
 
 sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun 
 /usr/local/ophidia/oph-server/bin/oph_server -d 2>&1 > /dev/null &
+
+
+# Start the Ophidia IO Server
+
+/usr/local/ophidia/oph-cluster/oph-io-server/bin/oph_io_server -i 1 > /dev/null 2>&1 &
 
 # Wait for services to start
 
@@ -194,8 +200,10 @@ cd $WORKSPACE
 wget --no-check-certificate -O file.nc ${NCFILE} > /dev/null 2> /dev/null
 cp -p file.nc file_2.nc
 
-# Massive import
-execc imp "oph_importnc3 src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ncores=$core;cwd=$cwd;"
+# Massive import MySQL IO server
+execc imp "oph_importnc3 src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
+# Massive import Ophidia IO server
+execc imp "oph_importnc3 src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
 execc csz "oph_cubesize cube=[measure=${VARIABLE}];cwd=$cwd;"
 execc ce "oph_cubeelements cube=[measure=${VARIABLE}];cwd=$cwd;"
 execc cs "oph_cubeschema cube=[measure=${VARIABLE}];cwd=$cwd;"
@@ -203,8 +211,10 @@ echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 
-# Randcube
-execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ncores=$core;cwd=$cwd;"
+# Randcube MySQL IO server
+execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
+# Randcube Ophidia IO server
+execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_math(measure,'OPH_MATH_ATAN');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_math(oph_sum_scalar(measure,1000),'OPH_MATH_ATAN');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_sum_scalar(oph_math(measure,'OPH_MATH_ATAN'),1000);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
@@ -288,7 +298,8 @@ echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"`
 
 # APEX
-execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
 execc dup "oph_duplicate cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc rdc "oph_duplicate cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
 execc agr "oph_aggregate2 cube=[measure=jenkins;level=2];dim=lon;operation=avg;ncores=$core;cwd=$cwd;"
