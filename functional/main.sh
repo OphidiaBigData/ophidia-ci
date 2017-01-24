@@ -215,6 +215,8 @@ echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
 # Randcube Ophidia IO server
 execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
+
+# Apply operations
 execc app "oph_apply query=oph_math(measure,'OPH_MATH_ATAN');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_math(oph_sum_scalar(measure,1000),'OPH_MATH_ATAN');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_sum_scalar(oph_math(measure,'OPH_MATH_ATAN'),1000);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
@@ -314,12 +316,9 @@ execc cio "oph_cubeio cube=[measure=jenkins;level=3];cwd=$cwd;"
 execc cio "oph_cubeio cube=[measure=jenkins;level=6];cwd=$cwd;"
 
 # Roll-up & drill-down
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
 execc rup "oph_rollup cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
 execc dwn "oph_drilldown cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"
 execc cio "oph_cubeio cube=[measure=jenkins;level=3];cwd=$cwd;"
@@ -327,6 +326,20 @@ execc cio "oph_cubeio cube=[measure=jenkins;level=3];cwd=$cwd;"
 # Subsetting
 execc sub2 "oph_subset2 cube=[measure=jenkins;level=3];subset_dims=lon|time;subset_filter=0:1000|0:500;ncores=$core;cwd=$cwd;"
 execc cs "oph_cubeschema cube=[measure=jenkins;level=3];cwd=$cwd;"
+
+# Missing values
+echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
+execc dc "oph_apply query=oph_predicate(measure,'x-800','>0','NAN','x');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc dc "oph_apply query=oph_cast('oph_float','oph_short',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc dc "oph_apply query=oph_cast('oph_float','oph_int',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc dc "oph_apply query=oph_cast('oph_float','oph_long',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc dc "oph_apply query=oph_cast('oph_float','oph_double',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc dc "oph_reduce2 operation=min;dim=time;cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"
+execc dc "oph_reduce2 operation=min;dim=time;missingvalue=-1000;cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"
+execc dc "oph_aggregate2 operation=max;dim=lon;cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"
+execc dc "oph_aggregate2 operation=max;dim=lon;missingvalue=-1000;cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"
 
 # Flush residual data
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
