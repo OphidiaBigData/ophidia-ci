@@ -18,6 +18,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+set -e
+
 if [ $# -ne 2 ]
 then
         echo "The following arguments are required: buildtype (master, devel, etc.), workspace (where there are the sources)"

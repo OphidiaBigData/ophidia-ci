@@ -28,10 +28,10 @@ fi
 dist=$2
 pkg_path=$3
 spec_path=$4
-if [ -z "$4" ]; then 
+if [ -z "$5" ]; then 
 keep_binary="no"
 else
-keep_binary=$4
+keep_binary=$5
 fi
 
 pkg_name="ophidia-io-server"
