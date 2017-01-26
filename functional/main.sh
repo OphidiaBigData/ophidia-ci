@@ -18,6 +18,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+set -e
+
 if [ $# -ne 6 ]
 then
         echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu14), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
@@ -115,7 +117,7 @@ sudo /usr/local/ophidia/extra/sbin/slurmctld
 
 # Wait for services to start
 
-sleep 10
+sleep 20
 
 # Config services
 
