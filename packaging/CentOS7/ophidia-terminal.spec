@@ -17,7 +17,7 @@ Requires(postun): /bin/sh
 Ophidia terminal, an advanced CLI to send requests and workflows to the Ophidia server.
  
 %files
-%defattr(-,ophidia,ophidia,-)
+%defattr(-,root,root,-)
 %license /usr/local/ophidia/oph-terminal/share/LICENSE 
 %license /usr/local/ophidia/oph-terminal/share/NOTICE.md
 /usr/local/ophidia/oph-terminal/bin/oph_term

@@ -31,7 +31,6 @@ pkg_path=$PWD
 
 #Prepare environment
 mkdir -p ${pkg_path}/sources/${buildtype}
-mkdir -p /usr/local/ophidia/share
 mkdir -p /usr/local/ophidia/pkg
 
 case "${distro}" in
