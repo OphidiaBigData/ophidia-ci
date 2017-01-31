@@ -216,9 +216,9 @@ echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 
 # Randcube MySQL IO server
-execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
 # Randcube Ophidia IO server
-execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
 
 # Apply operations
 execc app "oph_apply query=oph_math(measure,'OPH_MATH_ATAN');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
@@ -304,8 +304,8 @@ echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"`
 
 # APEX
-execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
-execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
 execc dup "oph_duplicate cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc rdc "oph_duplicate cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
 execc agr "oph_aggregate2 cube=[measure=jenkins;level=2];dim=lon;operation=avg;ncores=$core;cwd=$cwd;"
