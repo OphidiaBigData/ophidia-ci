@@ -103,7 +103,6 @@ if [ "${package}" == "analytics-framework" ] || [ $# -lt 3 ]; then
 	check_folder include/ 'oph_*.h'
 	check_folder include/drivers/ '*.h'
 	check_folder include/ophidiadb/ '*.h'
-	check_folder include/ophidiadb/query/ '*.h'
 	check_folder include/oph_ioserver/ '*.h'
 	check_folder include/oph_json/ '*.c'
 	check_folder include/query/ '*.h'
@@ -115,8 +114,6 @@ if [ "${package}" == "analytics-framework" ] || [ $# -lt 3 ]; then
 	check_folder src/ioservers/ '*.c'
 	check_folder src/ioservers/ '*.h'
 	check_folder src/oph_gsoap/ 'oph_*.h'
-	check_folder src/oph_gsoap/ssl 'oph_*.c'
-	check_folder src/oph_gsoap/gsi 'oph_*.c'
 	check_folder src/ophidiadb/ '*.c'
 	check_folder src/oph_ioserver/ '*.c'
 	check_folder src/oph_ioserver/ '*.h'
@@ -158,19 +155,6 @@ if [ "${package}" == "terminal" ] || [ $# -lt 3 ]; then
 
 	check_folder src/ 'oph_*.h'
 	check_folder src/ 'oph_*.c'
-	check_folder src/client/ 'oph_*.h'
-	check_folder src/client/ssl/ 'oph_*.c'
-	check_folder src/client/gsi/ 'oph_*.c'
-	check_folder src/env/ 'oph_*.h'
-	check_folder src/env/ 'oph_*.c'
-	check_folder src/help/ 'oph_*.h'
-	check_folder src/help/ 'oph_*.c'
-	check_folder src/viewer/ 'oph_*.h'
-	check_folder src/viewer/ 'oph_*.c'
-	check_folder src/viewer/oph_json/ 'oph_*.h'
-	check_folder src/viewer/oph_json/ 'oph_*.c'
-	check_folder src/workflow/ 'oph_*.h'
-	check_folder src/workflow/ 'oph_*.c'
 
 	R=$(git status | grep "modified" | wc -l)
 	if [ $R -eq 0 ]
