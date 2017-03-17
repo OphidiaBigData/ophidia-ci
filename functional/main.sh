@@ -304,8 +304,8 @@ echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"`
 
 # APEX
-execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
-execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
 execc dup "oph_duplicate cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc rdc "oph_duplicate cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
 execc agr "oph_aggregate2 cube=[measure=jenkins;level=2];dim=lon;operation=avg;ncores=$core;cwd=$cwd;"
@@ -319,17 +319,12 @@ execc cio "oph_cubeio cube=[measure=jenkins;level=0];cwd=$cwd;"
 execc cio "oph_cubeio cube=[measure=jenkins;level=3];cwd=$cwd;"
 execc cio "oph_cubeio cube=[measure=jenkins;level=6];cwd=$cwd;"
 
-# Roll-up & drill-down
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
-execc rup "oph_rollup cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
-execc dwn "oph_drilldown cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"
-execc cio "oph_cubeio cube=[measure=jenkins;level=3];cwd=$cwd;"
-
 # Subsetting
-execc sub2 "oph_subset2 cube=[measure=jenkins;level=3];subset_dims=lon|time;subset_filter=0:1000|0:500;ncores=$core;cwd=$cwd;"
-execc cs "oph_cubeschema cube=[measure=jenkins;level=3];cwd=$cwd;"
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
+execc sub2 "oph_subset2 cube=[measure=jenkins;level=1];subset_dims=lon|time;subset_filter=0:1000|0:500;ncores=$core;cwd=$cwd;"
+execc cs "oph_cubeschema cube=[measure=jenkins;level=1];cwd=$cwd;"
 
 # Missing values
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
@@ -345,10 +340,21 @@ execc dc "oph_reduce2 operation=min;dim=time;missingvalue=-1000;cube=[measure=je
 execc dc "oph_aggregate2 operation=max;dim=lon;cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"
 execc dc "oph_aggregate2 operation=max;dim=lon;missingvalue=-1000;cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"
 
+echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
+
+# Roll-up & drill-down (only MySQL)
+execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
+execc rup "oph_rollup cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc dwn "oph_drilldown cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc cio "oph_cubeio cube=[measure=jenkins;level=2];cwd=$cwd;"
+
 # Flush residual data
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
+
 execc dc "oph_deletecontainer container=jenkins;delete_type=physical;hidden=no;cwd=$cwd;"
 execc rmf "oph_folder command=rm;path=jenkins;cwd=/;"
 execc ls "oph_list cwd=/;"
