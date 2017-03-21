@@ -364,6 +364,7 @@ execc ls "oph_list cwd=/;"
 
 git clone https://github.com/OphidiaBigData/ophidia-workflow-catalogue.git
 cd ophidia-workflow-catalogue/indigo/test
+git checkout devel
 
 execw wf1 "test1.json" "$core,$WORKSPACE/file.nc,${VARIABLE}"
 execw wf2 "test2.json" "$core,$WORKSPACE/file.nc,${VARIABLE}"
