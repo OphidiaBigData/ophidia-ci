@@ -55,22 +55,27 @@ chmod 600 /home/jenkins/.ssh/authorized_keys
 
 ssh -o "StrictHostKeyChecking no" 127.0.0.1 ":"
 
-# ophidia-packages download
-
-mkdir -p /usr/local/ophidia/pkg
-cd /usr/local/ophidia/pkg
-
-wget --no-check-certificate "${URL}/${PKG}.zip"
-unzip ${PKG}.zip
-cd ${PKG}
-
-# install packages
-
-if [ ${dist} = 'el7.centos' ]
+if [ ${URL} != 'NULL' ]
 then
-	sudo yum -y install ophidia-*.rpm
-else 
-	sudo dpkg -i ophidia-*.deb
+
+	# ophidia-packages download
+
+	mkdir -p /usr/local/ophidia/pkg
+	cd /usr/local/ophidia/pkg
+
+	wget --no-check-certificate "${URL}/${PKG}.zip"
+	unzip ${PKG}.zip
+	cd ${PKG}
+
+	# install packages
+
+	if [ ${dist} = 'el7.centos' ]
+	then
+		sudo yum -y install ophidia-*.rpm
+	else 
+		sudo dpkg -i ophidia-*.deb
+	fi
+
 fi
 
 # Configuration
