@@ -4,7 +4,7 @@ Section: base
 Priority: optional
 Architecture: amd64
 Depends: zlib1g, libgsl0ldbl (>= 1.13)
-Maintainer: Ophidia Team <ophidia-info@lists.cmcc.it>
+Maintainer: Ophidia Team <ophidia-info@cmcc.it>
 Homepage: http://ophidia.cmcc.it
 Description: Ophidia Primitives
  Ophidia libraries implementing array-based primitives to be plugged into IO servers.  
