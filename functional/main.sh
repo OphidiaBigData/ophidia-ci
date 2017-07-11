@@ -426,6 +426,11 @@ execc dc "oph_deletecontainer container=jenkins;delete_type=physical;hidden=no;c
 execc rmf "oph_folder command=rm;path=jenkins;cwd=/;"
 execc ls "oph_list cwd=/;"
 
+# Test file system access
+execc lsd "oph_fs command=ls;"
+execc cdd "oph_fs command=cd;dpath=$WORKSPACE;"
+execc lsd "oph_fs command=ls;"
+
 # Integration test
 
 echo "Start integration tests"
