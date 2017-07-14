@@ -185,7 +185,7 @@ echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VAL
 
 echo "Start Ophidia Server"
 sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun 
-/usr/local/ophidia/oph-server/bin/oph_server -m -d 2>&1 > /dev/null &
+/usr/local/ophidia/oph-server/bin/oph_server -d 2>&1 > /dev/null &
 
 # Start the Ophidia IO Server
 
