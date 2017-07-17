@@ -2,7 +2,7 @@
 
 #
 #    Ophidia CI
-#    Copyright (C) 2012-2016 CMCC Foundation
+#    Copyright (C) 2012-2017 CMCC Foundation
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -18,11 +18,18 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+function wait_for_mysql {
+	while [ ! -e /var/lib/mysql/mysql.sock ]; do
+		sleep 20
+	done
+}
+
 set -e
 
-if [ $# -ne 6 ]
+if [ $# -lt 6 ]
 then
         echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu14), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
+        echo "The following arguments are optional: ioserver (mysql ophidiaio)"
         exit 1
 fi
 
@@ -32,6 +39,7 @@ URL=$3
 PKG=$4
 NCFILE=$5
 VARIABLE=$6
+IOSERVER=$7
 
 pkg_path=$PWD
 
@@ -55,22 +63,27 @@ chmod 600 /home/jenkins/.ssh/authorized_keys
 
 ssh -o "StrictHostKeyChecking no" 127.0.0.1 ":"
 
-# ophidia-packages download
-
-mkdir -p /usr/local/ophidia/pkg
-cd /usr/local/ophidia/pkg
-
-wget --no-check-certificate "${URL}/${PKG}.zip"
-unzip ${PKG}.zip
-cd ${PKG}
-
-# install packages
-
-if [ ${dist} = 'el7.centos' ]
+if [ ${URL} != 'NULL' ]
 then
-	sudo yum -y install ophidia-*.rpm
-else 
-	sudo dpkg -i ophidia-*.deb
+
+	# ophidia-packages download
+
+	mkdir -p /usr/local/ophidia/pkg
+	cd /usr/local/ophidia/pkg
+
+	wget --no-check-certificate "${URL}/${PKG}.zip"
+	unzip ${PKG}.zip
+	cd ${PKG}
+
+	# install packages
+
+	if [ ${dist} = 'el7.centos' ]
+	then
+		sudo yum -y install ophidia-*.rpm
+	else 
+		sudo dpkg -i ophidia-*.deb
+	fi
+
 fi
 
 # Configuration
@@ -91,7 +104,7 @@ cp ${pkg_path}/etc/server.conf /usr/local/ophidia/oph-server/etc/
 
 cd /usr/local/ophidia/oph-server/etc/cert/
 
-openssl req -newkey rsa:1024 -passout pass:abcd  -subj "/" -sha1  -keyout rootkey.pem -out rootreq.pem
+openssl req -newkey rsa:1024 -passout pass:abcd  -subj "/" -sha1 -keyout rootkey.pem -out rootreq.pem
 openssl x509 -req -in rootreq.pem -passin pass:abcd -sha1 -extensions v3_ca -signkey rootkey.pem -out rootcert.pem
 cat rootcert.pem rootkey.pem  > cacert.pem
 
@@ -103,15 +116,28 @@ rm -rf server* root* cacert.srl
 
 # Start services
 
+echo "Start MySQL"
+if [ ${dist} = 'el7.centos' ]
+then
+	sudo /bin/bash -c "/usr/bin/mysqld_safe --user=mysql 2>&1 > /dev/null &"
+else
+	sudo service mysql start
+fi
+
+echo "Start Apache"
 if [ ${dist} = 'el7.centos' ]
 then
 	sudo /usr/sbin/httpd
-	sudo -u munge /usr/sbin/munged
-	sudo /bin/bash -c "/usr/bin/mysqld_safe --user=mysql 2>&1 > /dev/null &"
 else
 	sudo service apache2 start
+fi
+
+echo "Start Munge"
+if [ ${dist} = 'el7.centos' ]
+then
+	sudo -u munge /usr/sbin/munged
+else
 	sudo -u munge /usr/sbin/munged --force
-	sudo service mysql start
 fi
 
 sudo /usr/local/ophidia/extra/sbin/slurmd
@@ -119,21 +145,33 @@ sudo /usr/local/ophidia/extra/sbin/slurmctld
 
 # Wait for services to start
 
-sleep 20
+if [ ${dist} = 'el7.centos' ]
+then
+	echo "Waiting for MySQL"
+	wait_for_mysql
+fi
 
 # Config services
 
+echo "Configure MySQL"
 mysqladmin -u root password 'abcd'
-
 echo "[client]" > /home/jenkins/.my.cnf
 echo "password=abcd" >> /home/jenkins/.my.cnf
 
+if [ ${dist} != 'el7.centos' ]
+then
+	sudo service mysql restart
+	sleep 5
+fi
+
 # Load ophidia-primitives
 
+echo "Load primitives"
 mysql -u root mysql < /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
 
 # Load Ophidia DB
 
+echo "Load Ophidia DB"
 echo "create database ophidiadb;" | mysql -u root
 echo "create database oph_dimensions;" | mysql -u root
 mysql -u root ophidiadb < /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/ophidiadb.sql
@@ -145,12 +183,13 @@ echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VAL
 
 # Start Ophidia Server
 
+echo "Start Ophidia Server"
 sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun 
 /usr/local/ophidia/oph-server/bin/oph_server -d 2>&1 > /dev/null &
 
-
 # Start the Ophidia IO Server
 
+echo "Start ophidia I/O Server"
 /usr/local/ophidia/oph-cluster/oph-io-server/bin/oph_io_server -i 1 > /dev/null 2>&1 &
 
 # Wait for services to start
@@ -167,14 +206,16 @@ function execc {
 	TIME=$(date +%s)
 	echo "Test $TESTN: EXEC COMMAND $2"
 	$INSTALL/oph_term $ACCESSPARAM -e "$2" 2>&1 > $1$TIME.json
-	if [ $(grep "ERROR" $1$TIME.json | wc -l) -gt 0 ]; then $(exit 1); else $(exit 0); fi
+	if [ $(grep "ERROR" $1$TIME.json | wc -l) -gt 0 ]; then cat /usr/local/ophidia/oph-server/log/server.log; cat $1$TIME.json; $(exit 1); else $(exit 0); fi
+	> /usr/local/ophidia/oph-server/log/server.log
 	let "TESTN++"
 }
 function execw {
 	TIME=$(date +%s)
 	echo "Test $TESTN: EXEC WORKFLOW $2 $3"
 	$INSTALL/oph_term $ACCESSPARAM -w "$2" -a "$3" 2>&1 > $1$TIME.json
-	if [ $(grep "ERROR" $1$TIME.json | wc -l) -gt 0 ]; then $(exit 1); else $(exit 0); fi
+	if [ $(grep "ERROR" $1$TIME.json | wc -l) -gt 0 ]; then cat /usr/local/ophidia/oph-server/log/server.log; cat $1$TIME.json; $(exit 1); else $(exit 0); fi
+	> /usr/local/ophidia/oph-server/log/server.log
 	let "TESTN++"
 }
 
@@ -194,6 +235,8 @@ if [ $(grep "Configuration Parameters" server_check$TIME.json | wc -l) -gt 0 ]; 
 
 # Functional tests
 
+echo "Start functional tests"
+
 # Create test folder and test container
 execc mk "oph_folder command=mkdir;path=/jenkins;cwd=/;"
 execc cc "oph_createcontainer container=jenkins;dim=lat|lon|plev|time;dim_type=double|double|double|double;hierarchy=oph_base|oph_base|oph_base|oph_time;vocabulary=CF;cwd=$cwd;"
@@ -204,10 +247,14 @@ cd $WORKSPACE
 wget --no-check-certificate -O file.nc ${NCFILE} > /dev/null 2> /dev/null
 cp -p file.nc file_2.nc
 
-# Massive import MySQL IO server
-execc imp "oph_importnc src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
-# Massive import Ophidia IO server
-execc imp "oph_importnc src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
+if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
+	# Massive import MySQL IO server
+	execc imp "oph_importnc src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
+fi
+if [ "$IOSERVER" == "ophidiaio" ] || [ $# -lt 7 ]; then
+	# Massive import Ophidia IO server
+	execc imp "oph_importnc src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
+fi
 execc csz "oph_cubesize cube=[measure=${VARIABLE}];cwd=$cwd;"
 execc ce "oph_cubeelements cube=[measure=${VARIABLE}];cwd=$cwd;"
 execc cs "oph_cubeschema cube=[measure=${VARIABLE}];cwd=$cwd;"
@@ -215,10 +262,14 @@ echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 
-# Randcube MySQL IO server
-execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
-# Randcube Ophidia IO server
-execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
+if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
+	# Randcube MySQL IO server
+	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
+fi
+if [ "$IOSERVER" == "ophidiaio" ] || [ $# -lt 7 ]; then
+	# Randcube Ophidia IO server
+	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
+fi
 
 # Apply operations
 execc app "oph_apply query=oph_math(measure,'OPH_MATH_ATAN');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
@@ -269,6 +320,18 @@ execc app "oph_apply query=oph_math(measure,'OPH_MATH_EXP');measure_type=auto;cu
 execc app "oph_apply query=oph_math(measure,'OPH_MATH_ROUND');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_math(measure,'OPH_MATH_TAN');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_math(measure,'OPH_MATH_ABS');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_append(measure);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_append('oph_float|oph_float','oph_float',measure,measure);check_type=no;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_append('oph_float|oph_float|oph_float','oph_float',measure,measure,measure);check_type=no;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_accumulate(measure);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_deaccumulate(measure);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_extend(measure);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_extend(measure,2);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_extend(measure,3,'i');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_interlace('oph_float|oph_float','oph_float',measure,measure);check_type=no;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_interlace('oph_float|oph_float|oph_float','oph_float',measure,measure,measure);check_type=no;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+#execc app "oph_apply query=oph_moving_avg(measure,2);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+#execc app "oph_apply query=oph_moving_avg(measure,0.5,'oph_ewma');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_predicate(measure,'x-100','>0','sqrt(x)-100','-x^2');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_get_subarray2(measure,'2:17');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_get_subarray2(measure,'1:2:end',36);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
@@ -285,6 +348,8 @@ execc app "oph_apply query=oph_reduce(measure,'OPH_AVG',30);measure_type=auto;cu
 execc app "oph_apply query=oph_reduce(measure,'OPH_STD',40);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_reduce2(measure,'OPH_MAX',10,1,360);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_reduce2(measure,'OPH_MIN',20,2,180);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_reduce2(measure,'OPH_ARG_MAX',10,4,90);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc app "oph_apply query=oph_reduce2(measure,'OPH_ARG_MIN',9,4,90);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_reduce2(measure,'OPH_AVG',12,10,36);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_reduce2(measure,'OPH_STD',5,36,10);measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc app "oph_apply query=oph_aggregate_stats(measure,'1111111');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
@@ -304,12 +369,16 @@ echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"`
 
 # APEX
-execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
-execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
+if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
+	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
+fi
+if [ "$IOSERVER" == "ophidiaio" ] || [ $# -lt 7 ]; then
+	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;filesystem=local;ndbms=1;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
+fi
 execc dup "oph_duplicate cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc rdc "oph_duplicate cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
 execc agr "oph_aggregate2 cube=[measure=jenkins;level=2];dim=lon;operation=avg;ncores=$core;cwd=$cwd;"
-execc ecb "oph_explorecube cube=[measure=jenkins;level=3];show_id=yes;show_index=yes;subset_dims=lat|time;subset_filter=0:1000|0:200;cwd=$cwd;"
+execc ecb "oph_explorecube cube=[measure=jenkins;level=3];show_id=yes;show_index=yes;subset_dims=lat|time;subset_filter=0:1000|0:200;subset_type=coord;cwd=$cwd;"
 execc mrg "oph_merge cube=[measure=jenkins;level=3];nmerge=16;ncores=$core;cwd=$cwd;"
 execc agr "oph_aggregate2 cube=[measure=jenkins;level=4];dim=lat;operation=min;ncores=$core;cwd=$cwd;"
 execc rdc "oph_reduce2 cube=[measure=jenkins;level=5];dim=time;operation=sum;ncores=$core;cwd=$cwd;"
@@ -330,15 +399,15 @@ execc cs "oph_cubeschema cube=[measure=jenkins;level=1];cwd=$cwd;"
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
-execc dc "oph_apply query=oph_predicate(measure,'x-800','>0','NAN','x');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
-execc dc "oph_apply query=oph_cast('oph_float','oph_short',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
-execc dc "oph_apply query=oph_cast('oph_float','oph_int',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
-execc dc "oph_apply query=oph_cast('oph_float','oph_long',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
-execc dc "oph_apply query=oph_cast('oph_float','oph_double',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
-execc dc "oph_reduce2 operation=min;dim=time;cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"
-execc dc "oph_reduce2 operation=min;dim=time;missingvalue=-1000;cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"
-execc dc "oph_aggregate2 operation=max;dim=lon;cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"
-execc dc "oph_aggregate2 operation=max;dim=lon;missingvalue=-1000;cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"
+execc apl "oph_apply query=oph_predicate(measure,'x-800','>0','NAN','x');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
+execc apl "oph_apply query=oph_cast('oph_float','oph_short',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc apl "oph_apply query=oph_cast('oph_float','oph_int',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc apl "oph_apply query=oph_cast('oph_float','oph_long',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc apl "oph_apply query=oph_cast('oph_float','oph_double',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
+execc red "oph_reduce2 operation=min;dim=time;cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"
+execc red "oph_reduce2 operation=min;dim=time;missingvalue=-1000;cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"
+execc agr "oph_aggregate2 operation=max;dim=lon;cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"
+execc agr "oph_aggregate2 operation=max;dim=lon;missingvalue=-1000;cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"
 
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
@@ -359,8 +428,14 @@ execc dc "oph_deletecontainer container=jenkins;delete_type=physical;hidden=no;c
 execc rmf "oph_folder command=rm;path=jenkins;cwd=/;"
 execc ls "oph_list cwd=/;"
 
+# Test file system access
+execc lsd "oph_fs command=ls;"
+execc cdd "oph_fs command=cd;dpath=$WORKSPACE;"
+execc lsd "oph_fs command=ls;"
 
 # Integration test
+
+echo "Start integration tests"
 
 git clone https://github.com/OphidiaBigData/ophidia-workflow-catalogue.git
 cd ophidia-workflow-catalogue/indigo/test

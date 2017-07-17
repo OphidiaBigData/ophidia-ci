@@ -38,6 +38,8 @@ if [ "${package}" == "primitives" ] || [ $# -eq 1 ]; then
 	git checkout ${buildtype}
 	./bootstrap
 	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-primitives --with-matheval-path=/usr/local/ophidia/extra/lib > /dev/null
+	echo `make -j2 -s > /dev/null`
+	echo "Do not care previous possible errors"
 	make -s > /dev/null
 	make install -s > /dev/null
 fi
@@ -50,6 +52,8 @@ if [ "${package}" == "io-server" ] || [ $# -eq 1 ]; then
 	git checkout ${buildtype}
 	./bootstrap
 	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server > /dev/null
+	echo `make -j2 -s > /dev/null`
+	echo "Do not care previous possible errors"
 	make -s > /dev/null
 	make install -s > /dev/null
 fi
@@ -62,6 +66,8 @@ if [ "${package}" == "analytics-framework" ] || [ $# -eq 1 ]; then
 	git checkout ${buildtype}
 	./bootstrap
 	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-analytics-framework --enable-parallel-netcdf --with-netcdf-path=/usr/local/ophidia/extra --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia --with-ophidiaio-server-path=/usr/local/ophidia/oph-cluster/oph-io-server > /dev/null
+	echo `make -j2 -s > /dev/null`
+	echo "Do not care previous possible errors"
 	make -s > /dev/null
 	make install -s > /dev/null
 fi
@@ -74,6 +80,8 @@ if [ "${package}" == "server" ] || [ $# -eq 1 ]; then
 	git checkout ${buildtype}
 	./bootstrap
 	./configure --prefix=/usr/local/ophidia/oph-server --with-framework-path=/usr/local/ophidia/oph-cluster/oph-analytics-framework --with-soapcpp2-path=/usr/local/ophidia/extra --enable-webaccess --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia  --with-matheval-path=/usr/local/ophidia/extra/lib > /dev/null
+	echo `make -j2 -s > /dev/null`
+	echo "Do not care previous possible errors"
 	make -s > /dev/null
 	make install -s > /dev/null
 fi
@@ -86,6 +94,8 @@ if [ "${package}" == "terminal" ] || [ $# -eq 1 ]; then
 	git checkout ${buildtype}
 	./bootstrap
 	./configure --prefix=/usr/local/ophidia/oph-terminal > /dev/null
+	echo `make -j2 -s > /dev/null`
+	echo "Do not care previous possible errors"
 	make -s > /dev/null
 	make install -s > /dev/null
 fi
