@@ -32,6 +32,8 @@ Ophidia server, a service responsible for managing client requests and workflows
 /var/www/html/ophidia/sessions.php
 /var/www/html/ophidia/tailer.php
 /var/www/html/ophidia/style.css
+/var/www/html/ophidia/openid.php
+/var/www/html/ophidia/userinfo.php
 %dir /var/www/html/ophidia/sessions
 
 %post
