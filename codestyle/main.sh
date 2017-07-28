@@ -32,6 +32,7 @@ WORKSPACE=$2
 package=$3
 
 function check_folder  {
+	echo "Check for $3 in $2"
 	if [ "${1}" == "c" ]; then
 		find $2 -name $3 -type f -print0 | xargs -0 indent -kr -cli8 -i8 -l200
 	else
@@ -71,8 +72,8 @@ if [ "${package}" == "io-server" ] || [ $# -lt 3 ]; then
 	check_folder "c" src/common/ 'debug.c'
 	check_folder "c" src/common/ 'oph_*.h'
 	check_folder "c" src/common/ 'oph_*.c'
-	check_folder "c" src/devices/ "*.h"
-	check_folder "c" src/devices/ "*.c"
+	check_folder "c" src/devices/ '*.h'
+	check_folder "c" src/devices/ '*.c'
 	check_folder "c" src/iostorage/ 'oph_*.h'
 	check_folder "c" src/iostorage/ 'oph_*.c'
 	check_folder "c" src/metadb/ 'oph_*.h'
@@ -109,24 +110,24 @@ if [ "${package}" == "analytics-framework" ] || [ $# -lt 3 ]; then
 
 	check_folder "c" include/ 'debug.h'
 	check_folder "c" include/ 'oph_*.h'
-	check_folder "c" include/drivers/ "*.h"
-	check_folder "c" include/ophidiadb/ "*.h"
-	check_folder "c" include/oph_ioserver/ "*.h"
-	check_folder "c" include/oph_json/ "*.h"
-	check_folder "c" include/query/ "*.h"
+	check_folder "c" include/drivers/ '*.h'
+	check_folder "c" include/ophidiadb/ '*.h'
+	check_folder "c" include/oph_ioserver/ '*.h'
+	check_folder "c" include/oph_json/ '*.h'
+	check_folder "c" include/query/ '*.h'
 	check_folder "c" src/ 'debug.c'
 	check_folder "c" src/ 'oph_*.c'
-	check_folder "c" src/clients/ "*.c"
-	check_folder "c" src/clients/ "*.h"
-	check_folder "c" src/drivers/ "*.c"
-	check_folder "c" src/ioservers/ "*.c"
-	check_folder "c" src/ioservers/ "*.h"
+	check_folder "c" src/clients/ '*.c'
+	check_folder "c" src/clients/ '*.h'
+	check_folder "c" src/drivers/ '*.c'
+	check_folder "c" src/ioservers/ '*.c'
+	check_folder "c" src/ioservers/ '*.h'
 	check_folder "c" src/oph_gsoap/ 'oph_*.h'
 	check_folder "c" src/oph_gsoap/ 'oph_*.c'
-	check_folder "c" src/ophidiadb/ "*.c"
-	check_folder "c" src/oph_ioserver/ "*.c"
-	check_folder "c" src/oph_ioserver/ "*.h"
-	check_folder "c" src/oph_json/ "*.c"
+	check_folder "c" src/ophidiadb/ '*.c'
+	check_folder "c" src/oph_ioserver/ '*.c'
+	check_folder "c" src/oph_ioserver/ '*.h'
+	check_folder "c" src/oph_json/ '*.c'
 
 	R=$(git status | grep "modified" | wc -l)
 	if [ $R -eq 0 ]
