@@ -9,7 +9,7 @@ URL:	      http://ophidia.cmcc.it
 Source0:      https://github.com/OphidiaBigData/ophidia-analytics-framework/
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Prefix:       /usr/local
-Requires:     mpich, mpich-autoload, mysql-community-libs >= 5.6.22, epel-release, jansson >= 2.4, libxml2 >= 2.7, openssl >= 1.0.1e, netcdf-mpich >= 4.3.3, ophidia-io-server
+Requires:     mpich, mpich-autoload, mysql-community-libs >= 5.6.22, epel-release, jansson >= 2.4, libxml2 >= 2.7, openssl >= 1.0.1e, netcdf-mpich >= 4.3.3, ophidia-io-server, cfitsio-devel
 
 %description
 Ophidia framework module with all analytics operators. Parallel NetCDF support enabled.
