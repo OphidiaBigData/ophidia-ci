@@ -80,7 +80,8 @@ then
 	if [ ${dist} = 'el7.centos' ]
 	then
 		sudo yum -y install ophidia-*.rpm
-	else 
+	else
+		sudo apt-get install -y gdebi
 		sudo gdebi ophidia-*.deb
 	fi
 
