@@ -81,7 +81,7 @@ then
 	then
 		sudo yum -y install ophidia-*.rpm
 	else 
-		sudo dpkg -i ophidia-*.deb
+		sudo gdebi ophidia-*.deb
 	fi
 
 fi
