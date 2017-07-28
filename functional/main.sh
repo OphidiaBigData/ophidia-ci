@@ -82,7 +82,11 @@ then
 		sudo yum -y install ophidia-*.rpm
 	else
 		sudo apt-get install -y gdebi
-		sudo gdebi ophidia-*.deb
+		sudo gdebi ophidia-primitives*.deb
+		sudo gdebi ophidia-io-server*.deb
+		sudo gdebi ophidia-analytics-framework*.deb
+		sudo gdebi ophidia-server*.deb
+		sudo gdebi ophidia-terminal*.deb
 	fi
 
 fi
