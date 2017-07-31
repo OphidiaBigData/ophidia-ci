@@ -86,6 +86,18 @@ then
 
 fi
 
+# Configuration
+
+if [ ${dist} = 'el7.centos' ]
+then
+	sudo cp -pr /usr/local/ophidia/oph-cluster/oph-primitives/lib/liboph_*.so /usr/lib64/mysql/plugin
+else
+	sudo cp -pr /usr/local/ophidia/oph-cluster/oph-primitives/lib/liboph_*.so /usr/lib/mysql/plugin
+fi
+
+sudo chown -R jenkins:jenkins /usr/local/ophidia
+sudo chown -R jenkins:jenkins /var/www/html/ophidia
+
 # Re-install io-server in debug mode
 
 mkdir -p /usr/local/ophidia/src
@@ -99,18 +111,6 @@ echo `make -j2 -s > /dev/null`
 echo "Do not care previous possible errors"
 make -s > /dev/null
 make install -s > /dev/null
-
-# Configuration
-
-if [ ${dist} = 'el7.centos' ]
-then
-	sudo cp -pr /usr/local/ophidia/oph-cluster/oph-primitives/lib/liboph_*.so /usr/lib64/mysql/plugin
-else
-	sudo cp -pr /usr/local/ophidia/oph-cluster/oph-primitives/lib/liboph_*.so /usr/lib/mysql/plugin
-fi
-
-sudo chown -R jenkins:jenkins /usr/local/ophidia
-sudo chown -R jenkins:jenkins /var/www/html/ophidia
 
 # Config Ophidia Server
 
