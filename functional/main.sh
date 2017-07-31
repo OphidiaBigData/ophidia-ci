@@ -79,9 +79,9 @@ then
 
 	if [ ${dist} = 'el7.centos' ]
 	then
-		sudo yum -y --skip-broken install ophidia-*.rpm
+		sudo yum -y install ophidia-*.rpm
 	else 
-		sudo dpkg -i --force-overwrite ophidia-*.deb
+		sudo dpkg -i ophidia-*.deb
 	fi
 
 fi
