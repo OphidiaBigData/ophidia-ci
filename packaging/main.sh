@@ -20,7 +20,7 @@
 
 if [ $# -lt 2 ]; then
 	echo "The following arguments are required: buildtype (master, devel, etc.), distro (centos7, ubuntu14)"
-	echo "The following arguments is optional: package (terminal, primitives, server, io-server or analytics-framework)"
+	echo "The following arguments is optional: package (terminal, primitives, server, io-server, io-server-debug or analytics-framework)"
 	exit 1
 fi
 
@@ -47,7 +47,7 @@ case "${distro}" in
         exit 1
 esac
 
-PACKAGES=("terminal" "primitives" "io-server" "analytics-framework" "server")
+PACKAGES=("terminal" "primitives" "io-server" "analytics-framework" "server" "io-server-debug")
 
 if [ ${dist} = 'el7.centos' ]; then
 	# For centos linux setup rpmbuild paths
@@ -68,7 +68,7 @@ if [ ${dist} = 'el7.centos' ]; then
 	}
 
 	#Build RPMS
-	if [ "${package}" = "terminal" ] || [ "${package}" = "analytics-framework" ] || [ "${package}" = "primitives" ] || [ "${package}" = "server" ] || [ "${package}" = "io-server" ]; then
+	if [ "${package}" = "terminal" ] || [ "${package}" = "analytics-framework" ] || [ "${package}" = "primitives" ] || [ "${package}" = "server" ] || [ "${package}" = "io-server" ] || [ "${package}" = "io-server-debug" ]; then
 		run_packaging_script_centos "${package}"
 	elif [ $# -eq 2 ]; then
 		for p in ${PACKAGES[@]}; do
@@ -98,7 +98,7 @@ elif [ ${dist} = 'debian' ]; then
 	}
 
 	#Build DEBS
-	if [ "${package}" = "terminal" ] || [ "${package}" = "analytics-framework" ] || [ "${package}" = "primitives" ] || [ "${package}" = "server" ] || [ "${package}" = "io-server" ]; then
+	if [ "${package}" = "terminal" ] || [ "${package}" = "analytics-framework" ] || [ "${package}" = "primitives" ] || [ "${package}" = "server" ] || [ "${package}" = "io-server" ] || [ "${package}" = "io-server-debug" ]; then
 		run_packaging_script_debian "${package}"
 	elif [ $# -eq 2 ]; then
 		for p in ${PACKAGES[@]}; do
