@@ -86,6 +86,20 @@ then
 
 fi
 
+# Re-install io-server in debug mode
+
+mkdir -p /usr/local/ophidia/src
+cd /usr/local/ophidia/src
+git clone https://github.com/OphidiaBigData/ophidia-io-server
+cd /usr/local/ophidia/src/ophidia-io-server
+git checkout devel
+./bootstrap
+./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server --disable-mem-check > /dev/null
+echo `make -j2 -s > /dev/null`
+echo "Do not care previous possible errors"
+make -s > /dev/null
+make install -s > /dev/null
+
 # Configuration
 
 if [ ${dist} = 'el7.centos' ]
