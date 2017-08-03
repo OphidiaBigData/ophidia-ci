@@ -100,8 +100,8 @@ sudo chown -R jenkins:jenkins /var/www/html/ophidia
 
 # Re-install io-server in debug mode
 
-mkdir -p /usr/local/ophidia/src
-cd /usr/local/ophidia/src
+mkdir -p /usr/local/ophidia/src/test
+cd /usr/local/ophidia/src/test
 git clone https://github.com/OphidiaBigData/ophidia-io-server
 cd /usr/local/ophidia/src/ophidia-io-server
 git checkout devel
