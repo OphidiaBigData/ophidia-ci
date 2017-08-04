@@ -100,17 +100,17 @@ sudo chown -R jenkins:jenkins /var/www/html/ophidia
 
 # Re-install io-server in debug mode
 
-mkdir -p /usr/local/ophidia/src/test
-cd /usr/local/ophidia/src/test
-git clone https://github.com/OphidiaBigData/ophidia-io-server
-cd /usr/local/ophidia/src/ophidia-io-server
-git checkout devel
-./bootstrap
-./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server --disable-mem-check > /dev/null
-echo `make -j2 -s > /dev/null`
-echo "Do not care previous possible errors"
-make -s > /dev/null
-make install -s > /dev/null
+#mkdir -p /usr/local/ophidia/src/test
+#cd /usr/local/ophidia/src/test
+#git clone https://github.com/OphidiaBigData/ophidia-io-server
+#cd /usr/local/ophidia/src/ophidia-io-server
+#git checkout devel
+#./bootstrap
+#./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server --disable-mem-check > /dev/null
+#echo `make -j2 -s > /dev/null`
+#echo "Do not care previous possible errors"
+#make -s > /dev/null
+#make install -s > /dev/null
 
 # Config Ophidia Server
 
@@ -204,7 +204,7 @@ sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
 # Start the Ophidia IO Server
 
 echo "Start ophidia I/O Server"
-/usr/local/ophidia/oph-cluster/oph-io-server/bin/oph_io_server -i 1 > /dev/null 2>&1 &
+/usr/local/ophidia/oph-cluster/oph-io-server/bin/oph_io_server -i 1 -d > /dev/null 2>&1 &
 
 # Wait for services to start
 
