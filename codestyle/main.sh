@@ -49,8 +49,23 @@ if [ "${buildtype}" != "default" ]; then
 	git checkout ${buildtype}
 fi
 if [ "${package}" == "default" ]; then
-	IFS='-' tokens=(`pwd`)
-	package=${tokens[-1]}
+	IFS='/' tokens=(`pwd`)
+	IFS=' '
+	folder=${tokens[-1]}
+	if [[ $folder == *"io-server"* ]]; then
+		package="io-server"
+	elif [[ $folder == *"analytics-framework"* ]]; then
+		package="analytics-framework"
+	elif [[ $folder == *"server"* ]]; then
+		package="server"
+	elif [[ $folder == *"terminal"* ]]; then
+		package="terminal"
+	elif [[ $folder == *"PyOphidia"* ]]; then
+		package="PyOphidia"
+	else
+		echo "Unable to detect package name"
+        exit 1
+	fi
 fi
 
 if [ "${package}" == "primitives" ] || [ $# -lt 3 ]; then
