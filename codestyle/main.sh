@@ -52,7 +52,9 @@ if [ "${package}" == "default" ]; then
 	IFS='/' tokens=(`pwd`)
 	IFS=' '
 	folder=${tokens[-1]}
-	if [[ $folder == *"io-server"* ]]; then
+	if [[ $folder == *"primitives"* ]]; then
+		package="primitives"
+	elif [[ $folder == *"io-server"* ]]; then
 		package="io-server"
 	elif [[ $folder == *"analytics-framework"* ]]; then
 		package="analytics-framework"
