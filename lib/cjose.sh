@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PREVIOUS=$PWD
+mkdir -p /usr/local/ophidia/src
 cd /usr/local/ophidia/src
 wget https://github.com/cisco/cjose/archive/0.4.1.tar.gz
 tar -xzf 0.4.1.tar.gz
