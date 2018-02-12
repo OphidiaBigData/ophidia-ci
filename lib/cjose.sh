@@ -9,6 +9,5 @@ cd cjose-0.4.1
 ./configure --prefix=/usr/local/ophidia/extra > /dev/null
 make > /dev/null
 make install > /dev/null
-export PKG_CONFIG_PATH=/usr/local/ophidia/extra/lib/pkgconfig:$PKG_CONFIG_PATH
 cd $PREVIOUS
 
