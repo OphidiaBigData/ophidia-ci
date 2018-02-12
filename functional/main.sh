@@ -29,7 +29,7 @@ set -e
 if [ $# -lt 6 ]
 then
         echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu14), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
-        echo "The following arguments are optional: ioserver (mysql ophidiaio)"
+        echo "The following arguments are optional: ioserver (mysql ophidiaio) sleeping period (0 by default)"
         exit 1
 fi
 
@@ -40,6 +40,7 @@ PKG=$4
 NCFILE=$5
 VARIABLE=$6
 IOSERVER=$7
+PERIOD=$8
 
 pkg_path=$PWD
 
@@ -245,6 +246,12 @@ cd
 $INSTALL/oph_term $ACCESSPARAM -e "oph_get_config" > server_check$TIME.json
 if [ $(grep "Configuration Parameters" server_check$TIME.json | wc -l) -gt 0 ]; then $(exit 0); else $(exit 1); fi
 
+
+
+# Sleeping period
+if [ $# -gt 7 ]; then
+	sleep $PERIOD
+fi
 
 
 # Functional tests
