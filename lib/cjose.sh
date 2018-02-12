@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PREVIOUS=$PWD
+cd /usr/local/ophidia/src
 wget https://github.com/cisco/cjose/archive/0.4.1.tar.gz
 tar -xzf 0.4.1.tar.gz
 cd cjose-0.4.1
@@ -7,4 +9,5 @@ cd cjose-0.4.1
 make > /dev/null
 make install > /dev/null
 export PKG_CONFIG_PATH=/usr/local/ophidia/extra/lib/pkgconfig:$PKG_CONFIG_PATH
+cd $PREVIOUS
 
