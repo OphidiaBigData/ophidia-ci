@@ -410,9 +410,12 @@ execc cio "oph_cubeio cube=[measure=jenkins;level=3];cwd=$cwd;"
 execc cio "oph_cubeio cube=[measure=jenkins;level=6];cwd=$cwd;"
 
 # Subsetting
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
 execc sub2 "oph_subset2 cube=[measure=jenkins;level=1];subset_dims=lon|time;subset_filter=0:1000|0:500;ncores=$core;cwd=$cwd;"
 execc cs "oph_cubeschema cube=[measure=jenkins;level=1];cwd=$cwd;"
 
