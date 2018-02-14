@@ -420,12 +420,8 @@ execc sub2 "oph_subset2 cube=[measure=jenkins;level=1];subset_dims=lon|time;subs
 execc cs "oph_cubeschema cube=[measure=jenkins;level=1];cwd=$cwd;"
 
 # Missing values
-echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
 execc apl "oph_apply query=oph_predicate(measure,'x-800','>0','NAN','x');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc apl "oph_apply query=oph_cast('oph_float','oph_short',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
 execc apl "oph_apply query=oph_cast('oph_float','oph_int',measure,NULL,-1000);cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
