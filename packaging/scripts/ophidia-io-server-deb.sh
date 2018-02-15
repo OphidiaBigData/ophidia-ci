@@ -38,7 +38,7 @@ repo_name="ophidia-io-server"
 
 source ${pkg_path}/scripts/functions.sh
 
-build $1 ${pkg_path} ${repo_name} "--prefix=/usr/local/ophidia/oph-cluster/oph-io-server --disable-mem-check"
+build $1 ${pkg_path} ${repo_name} "--prefix=/usr/local/ophidia/oph-cluster/oph-io-server"
 
 mkdir -p /usr/local/ophidia/oph-cluster/oph-io-server/share
 cp -f LICENSE NOTICE.md /usr/local/ophidia/oph-cluster/oph-io-server/share
