@@ -22,21 +22,21 @@ set -e
 
 if [ $# -lt 2 ]
 then
-        echo "The following arguments are required: buildtype (master, devel, etc.), workspace (where there are the sources)"
-        echo "The following arguments are optional: package (terminal, primitives, io-server, server, analytics-framework or PyOphidia)"
+        echo "The following arguments are required: buildtype (default, master, devel, etc.), workspace (where there are the sources)"
+        echo "The following arguments are optional: package (default, terminal, primitives, io-server, server, analytics-framework or PyOphidia)"
         exit 1
 fi
 
-buildtype=$1
-WORKSPACE=$2
-package=$3
+buildtype=${1}
+WORKSPACE=${2}
+package=${3}
 
 function check_folder  {
-	echo "Check for $3 in $2"
+	echo "Check for ${3} in ${2}"
 	if [ "${1}" == "c" ]; then
-		find $2 -name $3 -type f -print0 | xargs -0 indent -kr -cli8 -i8 -l200
+		find ${2} -name ${3} -type f -print0 | xargs -0 indent -kr -cli8 -i8 -l200
 	else
-		eval find $2 -name $3 -type f -print0 | xargs -0 autopep8 --max-line-length 200 --in-place --ignore E128
+		eval find ${2} -name ${3} -type f -print0 | xargs -0 autopep8 --max-line-length 200 --in-place --ignore E128
 	fi
 }
 
@@ -45,7 +45,30 @@ function check_folder  {
 # codestyle check for Ophidia Server
 
 cd $WORKSPACE
-git checkout ${buildtype}
+if [ "${buildtype}" != "default" ]; then
+	git checkout ${buildtype}
+fi
+if [ "${package}" == "default" ]; then
+	IFS='/' tokens=(`pwd`)
+	IFS=' '
+	folder=${tokens[-1]}
+	if [[ $folder == *"primitives"* ]]; then
+		package="primitives"
+	elif [[ $folder == *"io-server"* ]]; then
+		package="io-server"
+	elif [[ $folder == *"analytics-framework"* ]]; then
+		package="analytics-framework"
+	elif [[ $folder == *"server"* ]]; then
+		package="server"
+	elif [[ $folder == *"terminal"* ]]; then
+		package="terminal"
+	elif [[ $folder == *"PyOphidia"* ]]; then
+		package="PyOphidia"
+	else
+		echo "Unable to detect package name"
+        exit 1
+	fi
+fi
 
 if [ "${package}" == "primitives" ] || [ $# -lt 3 ]; then
 

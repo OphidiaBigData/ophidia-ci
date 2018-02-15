@@ -29,7 +29,7 @@ set -e
 if [ $# -lt 6 ]
 then
         echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu14), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
-        echo "The following arguments are optional: ioserver (mysql ophidiaio)"
+        echo "The following arguments are optional: ioserver (mysql ophidiaio) sleeping period (0 by default)"
         exit 1
 fi
 
@@ -40,6 +40,7 @@ PKG=$4
 NCFILE=$5
 VARIABLE=$6
 IOSERVER=$7
+PERIOD=$8
 
 pkg_path=$PWD
 
@@ -97,6 +98,20 @@ fi
 
 sudo chown -R jenkins:jenkins /usr/local/ophidia
 sudo chown -R jenkins:jenkins /var/www/html/ophidia
+
+# Re-install io-server in debug mode
+
+#mkdir -p /usr/local/ophidia/src/test
+#cd /usr/local/ophidia/src/test
+#git clone https://github.com/OphidiaBigData/ophidia-io-server
+#cd /usr/local/ophidia/src/ophidia-io-server
+#git checkout devel
+#./bootstrap
+#./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server --disable-mem-check > /dev/null
+#echo `make -j2 -s > /dev/null`
+#echo "Do not care previous possible errors"
+#make -s > /dev/null
+#make install -s > /dev/null
 
 # Config Ophidia Server
 
@@ -190,7 +205,7 @@ sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
 # Start the Ophidia IO Server
 
 echo "Start ophidia I/O Server"
-/usr/local/ophidia/oph-cluster/oph-io-server/bin/oph_io_server -i 1 > /dev/null 2>&1 &
+/usr/local/ophidia/oph-cluster/oph-io-server/bin/oph_io_server -i 1 -d > /dev/null 2>&1 &
 
 # Wait for services to start
 
@@ -231,6 +246,12 @@ cd
 $INSTALL/oph_term $ACCESSPARAM -e "oph_get_config" > server_check$TIME.json
 if [ $(grep "Configuration Parameters" server_check$TIME.json | wc -l) -gt 0 ]; then $(exit 0); else $(exit 1); fi
 
+
+
+# Sleeping period
+if [ $# -gt 7 ]; then
+	sleep $PERIOD
+fi
 
 
 # Functional tests
@@ -389,14 +410,16 @@ execc cio "oph_cubeio cube=[measure=jenkins;level=3];cwd=$cwd;"
 execc cio "oph_cubeio cube=[measure=jenkins;level=6];cwd=$cwd;"
 
 # Subsetting
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
-echo `execc dc "oph_delete cube=[measure=jenkins;level=2|3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=2];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
+echo `execc dc "oph_delete cube=[measure=jenkins;level=3];ncores=$core;cwd=$cwd;"`
 execc sub2 "oph_subset2 cube=[measure=jenkins;level=1];subset_dims=lon|time;subset_filter=0:1000|0:500;ncores=$core;cwd=$cwd;"
 execc cs "oph_cubeschema cube=[measure=jenkins;level=1];cwd=$cwd;"
 
 # Missing values
-echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins;level=1|2|3];ncores=$core;cwd=$cwd;"`
 execc apl "oph_apply query=oph_predicate(measure,'x-800','>0','NAN','x');measure_type=auto;cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
