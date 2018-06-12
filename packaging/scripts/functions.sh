@@ -41,8 +41,8 @@ function build {
 	get_version
 
 	./bootstrap
-	./configure ${config_args}
-	make
+	./configure ${config_args} > /dev/null
+	make -s > /dev/null
 	if [ $? = 2 ]
 	then
 		echo "Compilation Error!"
