@@ -9,7 +9,7 @@ URL:	      http://ophidia.cmcc.it
 Source0:      https://github.com/OphidiaBigData/ophidia-io-server/
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Prefix:       /usr/local
-Requires:     mysql-community-libs >= 5.6.22, ophidia-primitives, netcdf-mpich >= 4.3.3
+Requires:     mysql-community-libs >= 5.6.22, ophidia-primitives, netcdf >= 4.3.3, netcdf-mpich >= 4.3.3
 Requires(post): /bin/sh
 Requires(postun): /bin/sh
 
