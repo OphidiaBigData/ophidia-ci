@@ -3,8 +3,8 @@ Version: **VERSION**-**RELEASE**
 Section: base
 Priority: optional
 Architecture: amd64
-Depends: libmysqlclient18, ophidia-primitives 
+Depends: libmysqlclient18, ophidia-primitives, libmpich2-dev
 Maintainer: Ophidia Team <ophidia-info@cmcc.it>
 Homepage: http://ophidia.cmcc.it
 Description: Ophidia IO Server
- Ophidia native IO server module to perform I/O and queries on multidimensional data.
+ Ophidia native IO server module to perform I/O and queries on multidimensional data. Parallel NetCDF support enabled.

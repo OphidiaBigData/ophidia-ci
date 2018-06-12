@@ -9,12 +9,12 @@ URL:	      http://ophidia.cmcc.it
 Source0:      https://github.com/OphidiaBigData/ophidia-io-server/
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Prefix:       /usr/local
-Requires:     mysql-community-libs >= 5.6.22, ophidia-primitives
+Requires:     mysql-community-libs >= 5.6.22, ophidia-primitives, netcdf-mpich >= 4.3.3
 Requires(post): /bin/sh
 Requires(postun): /bin/sh
 
 %description
-Ophidia native IO server module to perform I/O and queries on multidimensional data.
+Ophidia native IO server module to perform I/O and queries on multidimensional data. Parallel NetCDF support enabled.
 
 %files
 %defattr(-,root,root,-)

@@ -38,7 +38,7 @@ repo_name="ophidia-io-server"
 
 source ${pkg_path}/scripts/functions.sh
 
-build $1 ${pkg_path} ${repo_name} "--prefix=/usr/local/ophidia/oph-cluster/oph-io-server"
+build $1 ${pkg_path} ${repo_name} "--prefix=/usr/local/ophidia/oph-cluster/oph-io-server --with-netcdf-path=/usr/local/ophidia/extra"
 
 mkdir -p /usr/local/ophidia/oph-cluster/oph-io-server/share
 cp -f LICENSE NOTICE.md /usr/local/ophidia/oph-cluster/oph-io-server/share

@@ -51,7 +51,7 @@ if [ "${package}" == "io-server" ] || [ $# -eq 1 ]; then
 	cd /usr/local/ophidia/src/ophidia-io-server
 	git checkout ${buildtype}
 	./bootstrap
-	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server > /dev/null
+	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-io-server --with-netcdf-path=/usr/local/ophidia/extra > /dev/null
 	echo `make -j2 -s > /dev/null`
 	echo "Do not care previous possible errors"
 	make -s > /dev/null
