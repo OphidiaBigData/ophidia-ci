@@ -478,8 +478,12 @@ execw wf50 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},1,no"
 execw wf51 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,no"
 execw wf52 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,yes"
 
-ps aux | grep valgrind
-ps aux | grep oph_server
+PID=`pidof oph_server`
+echo `kill $PID`
+sleep 5
+PID=`pidof valgrind`
+echo `kill $PID`
+sleep 5
 
 # Final tracing
 

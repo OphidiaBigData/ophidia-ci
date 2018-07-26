@@ -1,0 +1,8 @@
+	# profilo gawk, creato Thu Jul 26 11:47:31 2018
+
+	# Regola(e)
+
+	{
+		$1
+	}
+
