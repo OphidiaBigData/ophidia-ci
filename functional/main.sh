@@ -209,7 +209,7 @@ echo "Start ophidia I/O Server"
 
 # Wait for services to start
 
-sleep 5
+sleep 10
 
 # Initial tracing
 
@@ -478,7 +478,7 @@ execw wf50 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},1,no"
 execw wf51 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,no"
 execw wf52 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,yes"
 
-kill `pgrep oph_server`
+killall valgrind
 sleep 5
 
 # Final tracing
