@@ -200,7 +200,7 @@ echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VAL
 
 echo "Start Ophidia Server"
 sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
-valgrind /usr/local/ophidia/oph-server/bin/oph_server -d 2>/usr/local/ophidia/oph-server/log/trace.log > /usr/local/ophidia/oph-server/log/trace.log &
+valgrind --leak-check=full /usr/local/ophidia/oph-server/bin/oph_server -d 2>/usr/local/ophidia/oph-server/log/trace.log > /usr/local/ophidia/oph-server/log/trace.log &
 
 # Start the Ophidia IO Server
 
