@@ -211,7 +211,9 @@ echo "Start ophidia I/O Server"
 
 sleep 5
 
+# Initial tracing
 
+cat /usr/local/ophidia/oph-server/log/trace.log
 
 # Init environment for tests
 
@@ -478,6 +480,8 @@ execw wf52 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,yes"
 
 kill `pgrep oph_server`
 sleep 5
+
+# Final tracing
 
 cat /usr/local/ophidia/oph-server/log/trace.log
 
