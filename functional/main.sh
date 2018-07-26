@@ -199,8 +199,8 @@ echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VAL
 # Start Ophidia Server
 
 echo "Start Ophidia Server"
-sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun 
-/usr/local/ophidia/oph-server/bin/oph_server -d 2>&1 > /dev/null &
+sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
+valgrind /usr/local/ophidia/oph-server/bin/oph_server -d 2>/usr/local/ophidia/oph-server/log/trace.log > /usr/local/ophidia/oph-server/log/trace.log &
 
 # Start the Ophidia IO Server
 
@@ -475,6 +475,11 @@ execw wf411 "test4.json" "$core,$WORKSPACE/file.nc,${VARIABLE},1,1"
 execw wf50 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},1,no"
 execw wf51 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,no"
 execw wf52 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,yes"
+
+kill `pgrep oph_server`
+sleep 5
+
+cat /usr/local/ophidia/oph-server/log/trace.log
 
 exit 0
 
