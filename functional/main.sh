@@ -278,6 +278,15 @@ wget --no-check-certificate -O file.nc ${NCFILE} > /dev/null 2> /dev/null
 for i in `seq 1 ${NFILE}`; do
 	cp -p file.nc file_$i.nc
 done
+
+if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
+	# Massive import MySQL IO server
+	execc imp "oph_importnc src_path=$WORKSPACE/file.nc;measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
+fi
+if [ "$IOSERVER" == "ophidiaio" ] || [ $# -lt 7 ]; then
+	# Massive import Ophidia IO server
+	execc imp "oph_importnc src_path=$WORKSPACE/file.nc;measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
+fi
 rm -f file.nc
 
 if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
