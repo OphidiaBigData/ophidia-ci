@@ -29,7 +29,7 @@ set -e
 if [ $# -lt 6 ]
 then
         echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu14), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
-        echo "The following arguments are optional: ioserver (mysql ophidiaio) sleeping period (0 by default)"
+        echo "The following arguments are optional: ioserver (mysql ophidiaio), sleeping period (0 by default), number of files to be processed (2 by default)"
         exit 1
 fi
 
@@ -41,6 +41,7 @@ NCFILE=$5
 VARIABLE=$6
 IOSERVER=$7
 PERIOD=$8
+NFILE=$9
 
 pkg_path=$PWD
 
@@ -256,6 +257,12 @@ if [ $# -gt 7 ]; then
 fi
 
 
+# Files to be processed
+if [ $# -lt 9 ]; then
+	NFILE=2
+fi
+
+
 # Functional tests
 
 echo "Start functional tests"
@@ -268,7 +275,10 @@ execc ls "oph_list cwd=$cwd;"
 # Download NC file
 cd $WORKSPACE
 wget --no-check-certificate -O file.nc ${NCFILE} > /dev/null 2> /dev/null
-cp -p file.nc file_2.nc
+for i in `seq 1 ${NFILE}`; do
+	cp -p file.nc file_$i.nc
+done
+rm -f file.nc
 
 if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
 	# Massive import MySQL IO server
@@ -466,6 +476,7 @@ git clone https://github.com/OphidiaBigData/ophidia-workflow-catalogue.git
 cd ophidia-workflow-catalogue/indigo/test
 git checkout devel
 
+wget --no-check-certificate -O file.nc ${NCFILE} > /dev/null 2> /dev/null
 execw wf1 "test1.json" "$core,$WORKSPACE/file.nc,${VARIABLE}"
 execw wf2 "test2.json" "$core,$WORKSPACE/file.nc,${VARIABLE}"
 execw wf30 "test3.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0"
@@ -477,8 +488,6 @@ execw wf411 "test4.json" "$core,$WORKSPACE/file.nc,${VARIABLE},1,1"
 execw wf50 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},1,no"
 execw wf51 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,no"
 execw wf52 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,yes"
-
-sleep 3600
 
 # Final tracing
 
