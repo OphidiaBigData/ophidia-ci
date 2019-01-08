@@ -185,13 +185,13 @@ echo "Load primitives"
 mysql -u root mysql < /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
 
 # Load Ophidia DB
-
+partition="main"
 echo "Load Ophidia DB"
 echo "create database ophidiadb;" | mysql -u root
 echo "create database oph_dimensions;" | mysql -u root
 mysql -u root ophidiadb < /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/ophidiadb.sql
 echo "INSERT INTO host (hostname, cores, memory) VALUES ('127.0.0.1', 1, 1);" | mysql -u root ophidiadb
-echo "INSERT INTO hostpartition (partitionname) VALUES ('main');" | mysql -u root ophidiadb
+echo "INSERT INTO hostpartition (partitionname) VALUES ('${partition}');" | mysql -u root ophidiadb
 echo "INSERT INTO hashost (idhostpartition,idhost) VALUES (1,1);" | mysql -u root ophidiadb
 echo "INSERT INTO dbmsinstance (idhost, login, password, port) VALUES (1, 'root', 'abcd', 3306);" | mysql -u root ophidiadb
 echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VALUES (1, 'root', 'abcd', 65000, 'ophidiaio_memory');" | mysql -u root ophidiadb
@@ -270,11 +270,11 @@ cp -p file.nc file_2.nc
 
 if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
 	# Massive import MySQL IO server
-	execc imp "oph_importnc src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
+	execc imp "oph_importnc src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;host_partition=$partition;ioserver=mysql_table;ncores=$core;cwd=$cwd;"
 fi
 if [ "$IOSERVER" == "ophidiaio" ] || [ $# -lt 7 ]; then
 	# Massive import Ophidia IO server
-	execc imp "oph_importnc src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
+	execc imp "oph_importnc src_path=[$WORKSPACE/*.nc];measure=${VARIABLE};imp_concept_level=d;imp_dim=time;container=jenkins;host_partition=$partition;ioserver=ophidiaio_memory;ncores=$core;cwd=$cwd;"
 fi
 execc csz "oph_cubesize cube=[measure=${VARIABLE}];cwd=$cwd;"
 execc ce "oph_cubeelements cube=[measure=${VARIABLE}];cwd=$cwd;"
@@ -285,11 +285,11 @@ echo `execc dc "oph_delete cube=[measure=${VARIABLE}];ncores=$core;cwd=$cwd;"`
 
 if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
 	# Randcube MySQL IO server
-	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=main;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
+	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=$partition;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
 fi
 if [ "$IOSERVER" == "ophidiaio" ] || [ $# -lt 7 ]; then
 	# Randcube Ophidia IO server
-	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=main;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
+	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=$partition;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
 fi
 
 # Apply operations
@@ -391,10 +391,10 @@ echo `execc dc "oph_delete cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;
 
 # APEX
 if [ "$IOSERVER" == "mysql" ] || [ $# -lt 7 ]; then
-	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
+	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=$partition;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
 fi
 if [ "$IOSERVER" == "ophidiaio" ] || [ $# -lt 7 ]; then
-	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
+	execc rc "oph_randcube compressed=no;container=jenkins;dim=lat|lon|time;dim_size=16|10|360;exp_ndim=2;host_partition=$partition;measure=jenkins;measure_type=float;nfrag=16;ntuple=10;concept_level=c|c|d;ioserver=ophidiaio_memory;nhost=1;ncores=$core;cwd=$cwd;"
 fi
 execc dup "oph_duplicate cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc rdc "oph_duplicate cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
@@ -437,7 +437,7 @@ echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 
 # Roll-up & drill-down (only MySQL)
-execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=test;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
+execc rc "oph_randcube container=jenkins;dim=lat|lon|time;dim_size=16|100|360;exp_ndim=2;host_partition=$partition;measure=jenkins;measure_type=float;nfrag=16;ntuple=100;concept_level=c|c|d;ioserver=mysql_table;nhost=1;ncores=$core;cwd=$cwd;"
 execc rup "oph_rollup cube=[measure=jenkins;level=0];ncores=$core;cwd=$cwd;"
 execc dwn "oph_drilldown cube=[measure=jenkins;level=1];ncores=$core;cwd=$cwd;"
 execc cio "oph_cubeio cube=[measure=jenkins;level=2];cwd=$cwd;"
