@@ -476,6 +476,8 @@ git clone https://github.com/OphidiaBigData/ophidia-workflow-catalogue.git
 cd ophidia-workflow-catalogue/indigo/test
 git checkout devel
 
+sleep 3600
+
 execw wf1 "test1.json" "$core,$WORKSPACE/file.nc,${VARIABLE}"
 execw wf2 "test2.json" "$core,$WORKSPACE/file.nc,${VARIABLE}"
 execw wf30 "test3.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0"
