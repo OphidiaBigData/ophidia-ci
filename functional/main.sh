@@ -206,6 +206,7 @@ if [ ${dist} = 'el7.centos' ]
 then
 	sudo yum -y install valgrind
 else
+	sudo apt-get update
 	sudo apt-get install -y valgrind
 fi
 
