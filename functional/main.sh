@@ -201,7 +201,15 @@ echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VAL
 
 echo "Start Ophidia Server"
 sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
-sudo yum -y install valgrind
+
+if [ ${dist} = 'el7.centos' ]
+then
+	sudo yum -y install valgrind
+else
+	sudo apt-get install -y valgrind
+fi
+
+
 valgrind --leak-check=full /usr/local/ophidia/oph-server/bin/oph_server -d 2>/usr/local/ophidia/oph-server/log/trace.log > /usr/local/ophidia/oph-server/log/trace.log &
 
 # Start the Ophidia IO Server
@@ -475,8 +483,6 @@ echo "Start integration tests"
 git clone https://github.com/OphidiaBigData/ophidia-workflow-catalogue.git
 cd ophidia-workflow-catalogue/indigo/test
 git checkout devel
-
-sleep 3600
 
 execw wf1 "test1.json" "$core,$WORKSPACE/file.nc,${VARIABLE}"
 execw wf2 "test2.json" "$core,$WORKSPACE/file.nc,${VARIABLE}"
