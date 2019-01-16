@@ -105,6 +105,10 @@ function copy_control {
 	pkg_name=$2
 	control_path=$5
 
+	if [ -f ${control_path}/${pkg_name}.conffiles ]; then
+		cp ${control_path}/${pkg_name}.conffiles ${pkg_path}/${pkg_name}_${version}-${release}_amd64/DEBIAN/conffiles
+	fi
+
 	cp ${control_path}/${pkg_name}.control ${pkg_path}/${pkg_name}_${version}-${release}_amd64/DEBIAN/control
 	sed -i "s/\*\*VERSION\*\*/${version}/g" ${pkg_path}/${pkg_name}_${version}-${release}_amd64/DEBIAN/control
 	sed -i "s/\*\*RELEASE\*\*/${release}/g" ${pkg_path}/${pkg_name}_${version}-${release}_amd64/DEBIAN/control
