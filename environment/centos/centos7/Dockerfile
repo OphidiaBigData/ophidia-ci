@@ -52,6 +52,8 @@ RUN yum -y install \
 	munge-devel \
 	munge-libs
 
+RUN yum -y remove mpich-3.2-autoload
+
 USER jenkins
 
 ENV CC /usr/lib64/mpich/bin/mpicc
