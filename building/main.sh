@@ -20,24 +20,42 @@
 
 if [ $# -lt 1 ]
 then
-        echo "The following arguments are required: buildtype (master, devel, etc.)"
+        echo "The following arguments are required: buildtype (master, devel, etc.), distro (centos7, ubuntu18)"
         echo "The following arguments are optional: package (terminal, primitives, io-server, server or analytics-framework)"
         exit 1
 fi
 
 buildtype=$1
-package=$2
+distro=$2
+package=$3
+
+case "${distro}" in
+        centos7)
+			dist='el7.centos'
+            ;;         
+        ubuntu18)
+			dist='debian'
+            ;;         
+        *)
+            echo "Distro can be centos7 or ubunutu18"
+            exit 1
+esac
 
 mkdir -p /usr/local/ophidia/src
 
 # ophidia-primitives installation
-if [ "${package}" == "primitives" ] || [ $# -eq 1 ]; then
+if [ "${package}" == "primitives" ] || [ $# -eq 2 ]; then
 	cd /usr/local/ophidia/src
 	git clone https://github.com/OphidiaBigData/ophidia-primitives
 	cd /usr/local/ophidia/src/ophidia-primitives
 	git checkout ${buildtype}
 	./bootstrap
-	./configure --prefix=/usr/local/ophidia/oph-cluster/oph-primitives --with-matheval-path=/usr/local/ophidia/extra/lib > /dev/null
+	if [ ${dist} = 'el7.centos' ]
+	then
+		./configure --prefix=/usr/local/ophidia/oph-cluster/oph-primitives --with-matheval-path=/usr/local/ophidia/extra/lib > /dev/null
+	else
+		./configure --prefix=/usr/local/ophidia/oph-cluster/oph-primitives --with-matheval-path=/usr/lib/x86_64-linux-gnu > /dev/null
+	fi
 	echo `make -j2 -s > /dev/null`
 	echo "Do not care previous possible errors"
 	make -s > /dev/null
@@ -45,7 +63,7 @@ if [ "${package}" == "primitives" ] || [ $# -eq 1 ]; then
 fi
 
 # ophidia-io-server installation
-if [ "${package}" == "io-server" ] || [ $# -eq 1 ]; then
+if [ "${package}" == "io-server" ] || [ $# -eq 2 ]; then
 	cd /usr/local/ophidia/src
 	git clone https://github.com/OphidiaBigData/ophidia-io-server
 	cd /usr/local/ophidia/src/ophidia-io-server
@@ -59,7 +77,7 @@ if [ "${package}" == "io-server" ] || [ $# -eq 1 ]; then
 fi
 
 # ophidia-analytics-framework installation
-if [ "${package}" == "analytics-framework" ] || [ $# -eq 1 ]; then
+if [ "${package}" == "analytics-framework" ] || [ $# -eq 2 ]; then
 	cd /usr/local/ophidia/src
 	git clone https://github.com/OphidiaBigData/ophidia-analytics-framework
 	cd /usr/local/ophidia/src/ophidia-analytics-framework
@@ -73,13 +91,18 @@ if [ "${package}" == "analytics-framework" ] || [ $# -eq 1 ]; then
 fi
 
 # ophidia-server installation
-if [ "${package}" == "server" ] || [ $# -eq 1 ]; then
+if [ "${package}" == "server" ] || [ $# -eq 2 ]; then
 	cd /usr/local/ophidia/src
 	git clone https://github.com/OphidiaBigData/ophidia-server
 	cd /usr/local/ophidia/src/ophidia-server
 	git checkout ${buildtype}
 	./bootstrap
-	./configure --prefix=/usr/local/ophidia/oph-server --with-framework-path=/usr/local/ophidia/oph-cluster/oph-analytics-framework --with-soapcpp2-path=/usr/local/ophidia/extra --enable-webaccess --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia  --with-matheval-path=/usr/local/ophidia/extra/lib --with-cjose-path=/usr/local/ophidia/extra/lib > /dev/null
+	if [ ${dist} = 'el7.centos' ]
+	then
+        ./configure --prefix=/usr/local/ophidia/oph-server --with-framework-path=/usr/local/ophidia/oph-cluster/oph-analytics-framework --with-soapcpp2-path=/usr/local/ophidia/extra --enable-webaccess --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia  --with-matheval-path=/usr/local/ophidia/extra/lib --with-cjose-path=/usr/local/ophidia/extra/lib > /dev/null
+	else
+        ./configure --prefix=/usr/local/ophidia/oph-server --with-framework-path=/usr/local/ophidia/oph-cluster/oph-analytics-framework --with-soapcpp2-path=/usr/local/ophidia/extra --enable-webaccess --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia  --with-matheval-path=/usr/lib/x86_64-linux-gnu --with-cjose-path=/usr/local/ophidia/extra/lib > /dev/null
+	fi
 	echo `make -j2 -s > /dev/null`
 	echo "Do not care previous possible errors"
 	make -s > /dev/null
@@ -87,7 +110,7 @@ if [ "${package}" == "server" ] || [ $# -eq 1 ]; then
 fi
 
 # ophidia-terminal installation
-if [ "${package}" == "terminal" ] || [ $# -eq 1 ]; then
+if [ "${package}" == "terminal" ] || [ $# -eq 2 ]; then
 	cd /usr/local/ophidia/src
 	git clone https://github.com/OphidiaBigData/ophidia-terminal
 	cd /usr/local/ophidia/src/ophidia-terminal
