@@ -49,9 +49,11 @@ RUN apt-get install -y \
     valgrind
 
 RUN apt-get install -y \
-	libssl1.0-dev \
-	libcurl3 \
-    libcurl-openssl1.0-dev
+	libssl-dev \
+	libssl1.1 \
+	libcurl4 \
+	libcurl4-openssl-dev \
+	curl
 
 RUN apt-get install -y \
 	openssl \
