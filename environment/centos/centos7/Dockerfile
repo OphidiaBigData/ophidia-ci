@@ -43,7 +43,9 @@ RUN yum -y install \
     cfitsio-devel \
     valgrind
 
-RUN pip install gcovr
+RUN pip install \
+    gcovr \
+    autopep8
 
 RUN yum -y install \
 	httpd \

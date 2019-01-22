@@ -63,7 +63,9 @@ RUN apt-get install -y \
     libmatheval-dev \
     libmatheval1
 
-RUN pip install gcovr
+RUN pip install \
+    gcovr \
+    autopep8
 
 RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.11-1_all.deb
 
