@@ -40,7 +40,8 @@ RUN yum -y install \
     netcdf-devel \
     netcdf-mpich-devel \
     hdf5-mpich-devel \
-    cfitsio-devel
+    cfitsio-devel \
+    valgrind
 
 RUN pip install gcovr
 

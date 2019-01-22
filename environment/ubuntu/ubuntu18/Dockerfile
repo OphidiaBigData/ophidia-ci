@@ -45,7 +45,8 @@ RUN apt-get install -y \
 	libbison-dev \
 	flex \
 	pkg-config \
-    unzip
+    unzip \
+    valgrind
 
 RUN apt-get install -y \
 	libssl1.0-dev \
