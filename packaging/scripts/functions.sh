@@ -35,7 +35,6 @@ function build {
 	git clone https://github.com/OphidiaBigData/${repo_name}.git
 	cd ${pkg_path}/sources/$1/${repo_name}
 
-	git checkout release
 	git checkout $1
 
 	#Get version
