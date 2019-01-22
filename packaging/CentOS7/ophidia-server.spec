@@ -29,7 +29,7 @@ Ophidia server, a service responsible for managing client requests and workflows
 %config(noreplace) /usr/local/ophidia/oph-server/etc/ophidiadb.conf
 %config(noreplace) /usr/local/ophidia/oph-server/etc/server.conf
 %config(noreplace) /usr/local/ophidia/oph-server/etc/rmanager.conf
-%config(noreplace) /usr/local/ophidia/oph-server/script/*.sh
+%config(noreplace) /usr/local/ophidia/oph-server/etc/script/*.sh
 /var/www/html/ophidia/env.php
 /var/www/html/ophidia/header.php
 /var/www/html/ophidia/index.php
