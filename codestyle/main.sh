@@ -23,7 +23,7 @@ set -e
 if [ $# -lt 2 ]
 then
         echo "The following arguments are required: buildtype (default, master, devel, etc.), workspace (where there are the sources)"
-        echo "The following arguments are optional: package (default, terminal, primitives, io-server, server, analytics-framework or PyOphidia)"
+        echo "The following arguments are optional: package (default, terminal, primitives, io-server, server, analytics-framework, PyOphidia or wps-module)"
         exit 1
 fi
 
@@ -64,6 +64,8 @@ if [ "${package}" == "default" ]; then
 		package="terminal"
 	elif [[ $folder == *"PyOphidia"* ]]; then
 		package="PyOphidia"
+	elif [[ $folder == *"wps-module"* ]]; then
+		package="wps-module"
 	else
 		echo "Unable to detect package name"
         exit 1
@@ -204,6 +206,22 @@ fi
 if [ "${package}" == "PyOphidia" ] || [ $# -lt 3 ]; then
 
 	check_folder "python" PyOphidia/ '\[^_]*.py'
+
+	R=$(git status | grep "modified" | wc -l)
+	if [ $R -eq 0 ]
+		then 
+			echo "SUCCESS: all files are compliant with coding style"
+			$(exit 0) 
+		else 
+			echo "WARNING: found $R files not compliant:"
+			git status | grep "modified" | sed -n "s/^.*modified:[ ]*//p"
+			$(exit 1) 
+	fi
+fi
+
+if [ "${package}" == "wps-module" ] || [ $# -lt 3 ]; then
+
+	check_folder "python" processes/ '\[^_]*.py'
 
 	R=$(git status | grep "modified" | wc -l)
 	if [ $R -eq 0 ]
