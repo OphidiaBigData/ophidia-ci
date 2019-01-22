@@ -1,3 +1,7 @@
+%if 0%{?rhel} == 7
+ %define dist .el7.centos
+%endif
+
 Name:         ophidia-terminal  
 Version:      **VERSION**
 Release:      **RELEASE**%{?dist}
