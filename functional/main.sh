@@ -29,7 +29,7 @@ set -e
 if [ $# -lt 6 ]
 then
         echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu14), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
-        echo "The following arguments are optional: ioserver (mysql ophidiaio), sleeping period (0 by default), number of files to be processed (2 by default)"
+        echo "The following arguments are optional: ioserver (mysql ophidiaio), sleeping period (0 by default), number of files to be processed (2 by default), use valgrind (no by default, use \"yes\")"
         exit 1
 fi
 
@@ -42,6 +42,7 @@ VARIABLE=$6
 IOSERVER=$7
 PERIOD=$8
 NFILE=$9
+USEVALGRIND=$10
 
 pkg_path=$PWD
 
@@ -202,16 +203,12 @@ echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VAL
 echo "Start Ophidia Server"
 sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
 
-if [ ${dist} = 'el7.centos' ]
+if [ "$USEVALGRIND" == "yes" ]
 then
-	sudo yum -y install valgrind
+	valgrind --leak-check=full /usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
 else
-	sudo apt-get update
-	sudo apt-get install -y valgrind
+	/usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
 fi
-
-
-valgrind --leak-check=full /usr/local/ophidia/oph-server/bin/oph_server -d 2>/usr/local/ophidia/oph-server/log/trace.log > /usr/local/ophidia/oph-server/log/trace.log &
 
 # Start the Ophidia IO Server
 
@@ -224,7 +221,9 @@ sleep 10
 
 # Initial tracing
 
+echo "Initial server trace begin"
 cat /usr/local/ophidia/oph-server/log/trace.log
+echo "Initial server trace end"
 
 # Init environment for tests
 
@@ -497,9 +496,13 @@ execw wf50 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},1,no"
 execw wf51 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,no"
 execw wf52 "test5.json" "$core,$WORKSPACE/file.nc,${VARIABLE},0,yes"
 
+echo "Stop integration tests"
+
 # Final tracing
 
+echo "Final server trace begin"
 cat /usr/local/ophidia/oph-server/log/trace.log
+echo "Final server trace end"
 
 exit 0
 
