@@ -24,6 +24,7 @@ Ophidia native IO server module to perform I/O and queries on multidimensional d
 /usr/local/ophidia/oph-cluster/oph-io-server/etc
 /usr/local/ophidia/oph-cluster/oph-io-server/lib
 /usr/local/ophidia/oph-cluster/oph-io-server/include
+%config(noreplace) /usr/local/ophidia/oph-cluster/oph-io-server/etc/oph_ioserver.conf
 %dir /usr/local/ophidia/oph-cluster/oph-io-server/data1/log
 %dir /usr/local/ophidia/oph-cluster/oph-io-server/data1/var
 

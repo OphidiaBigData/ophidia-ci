@@ -22,5 +22,7 @@ Ophidia framework module with all analytics operators. Parallel NetCDF support e
 /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc
 /usr/local/ophidia/oph-cluster/oph-analytics-framework/log
 /usr/local/ophidia/oph-cluster/oph-analytics-framework/lib
+%config(noreplace) /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_configuration
+%config(noreplace) /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_soap_configuration
 /var/www/html/ophidia/operators_xml
 /var/www/html/ophidia/img
