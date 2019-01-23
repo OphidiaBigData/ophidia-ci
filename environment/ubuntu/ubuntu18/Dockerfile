@@ -121,13 +121,13 @@ RUN sudo mkdir -p /usr/local/ophidia/extra/src && \
 RUN cd /usr/local/ophidia/extra/src && \
     wget http://ftp.gnu.org/gnu/libmatheval/libmatheval-1.1.11.tar.gz && \
     wget ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.4.0.tar.gz && \
-    wget https://sourceforge.net/projects/gsoap2/files/oldreleases/gsoap_2.8.22.zip/download && \
-    mv download gsoap_2.8.22.zip && \
+    wget https://sourceforge.net/projects/gsoap2/files/gsoap-2.8/gsoap_2.8.76.zip/download && \
+    mv download gsoap_2.8.76.zip && \
 	wget https://github.com/SchedMD/slurm/archive/master.tar.gz && \
     wget https://github.com/cisco/cjose/archive/0.4.1.tar.gz && \
     tar zxvf libmatheval-1.1.11.tar.gz && \
     tar zxvf netcdf-4.4.0.tar.gz && \
-    unzip gsoap_2.8.22.zip && \
+    unzip gsoap_2.8.76.zip && \
 	tar zxvf master.tar.gz && \
     tar -xzf 0.4.1.tar.gz 
 
