@@ -1,0 +1,10 @@
+Package: ophidia-primitives
+Version: **VERSION**-**RELEASE**
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: zlib1g, libgsl23 (>=2.4), libgslcblas0 (>=2.4), libmatheval1 (>= 1.1.11)
+Maintainer: Ophidia Team <ophidia-info@cmcc.it>
+Homepage: http://ophidia.cmcc.it
+Description: Ophidia Primitives
+ Ophidia libraries implementing array-based primitives to be plugged into IO servers.  

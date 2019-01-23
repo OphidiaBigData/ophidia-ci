@@ -1,0 +1,10 @@
+Package: ophidia-terminal
+Version: **VERSION**-**RELEASE**
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libjansson4 (>= 2.4), libgraphviz-dev (>= 2.26.0), libgtk2.0-0 (>= 2.24.23), libxml2 (>= 2.9), libcurl4 (>= 7.57), libssl1.1 (>= 1.1.0g), libreadline7 (>= 7.0)
+Maintainer: Ophidia Team <ophidia-info@cmcc.it>
+Homepage: http://ophidia.cmcc.it
+Description: Ophidia Terminal
+ Ophidia terminal, an advanced CLI to send requests and workflows to the Ophidia server.

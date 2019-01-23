@@ -19,7 +19,7 @@
 #
 
 if [ $# -lt 2 ]; then
-	echo "The following arguments are required: buildtype (master, devel, etc.), distro (centos7, ubuntu14)"
+	echo "The following arguments are required: buildtype (master, devel, etc.), distro (centos7, ubuntu18)"
 	echo "The following arguments is optional: package (terminal, primitives, server, io-server or analytics-framework)"
 	exit 1
 fi
@@ -38,12 +38,12 @@ case "${distro}" in
 		dist='el7.centos'
 		spec_path="${pkg_path}/CentOS7"
         ;;         
-    ubuntu14)
+    ubuntu18)
 		dist='debian'
-		spec_path="${pkg_path}/Ubuntu14"
+		spec_path="${pkg_path}/Ubuntu18"
         ;;         
     *)
-        echo "Distro can be centos7 or ubuntu14"
+        echo "Distro can be centos7 or ubuntu18"
         exit 1
 esac
 
