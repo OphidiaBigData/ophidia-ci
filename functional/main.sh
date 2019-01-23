@@ -58,8 +58,8 @@ esac
 
 # Install Ophidia & Services
 
-ssh-keygen -t dsa -f /home/jenkins/.ssh/id_dsa -N ""
-cat /home/jenkins/.ssh/id_dsa.pub >> /home/jenkins/.ssh/authorized_keys
+ssh-keygen -t rsa -f /home/jenkins/.ssh/id_rsa -N ""
+cat /home/jenkins/.ssh/id_rsa.pub >> /home/jenkins/.ssh/authorized_keys
 chmod 600 /home/jenkins/.ssh/authorized_keys
 
 ssh -o "StrictHostKeyChecking no" 127.0.0.1 ":"
