@@ -38,7 +38,7 @@ repo_name="ophidia-primitives"
 
 source ${pkg_path}/scripts/functions.sh
 
-build $1 ${pkg_path} ${repo_name} "--prefix=/usr/local/ophidia/oph-cluster/oph-primitives --with-matheval-path=/usr/local/ophidia/extra/lib"
+build $1 ${pkg_path} ${repo_name} "--prefix=/usr/local/ophidia/oph-cluster/oph-primitives --with-matheval-path=/usr/lib/x86_64-linux-gnu"
 
 mkdir -p /usr/local/ophidia/oph-cluster/oph-primitives/share
 cp -f LICENSE NOTICE.md /usr/local/ophidia/oph-cluster/oph-primitives/share

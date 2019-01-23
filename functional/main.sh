@@ -28,7 +28,7 @@ set -e
 
 if [ $# -lt 6 ]
 then
-        echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu14), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
+        echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu18), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
         echo "The following arguments are optional: ioserver (mysql ophidiaio), sleeping period (0 by default), number of files to be processed (2 by default), use valgrind (no by default, use \"yes\")"
         exit 1
 fi
@@ -50,18 +50,18 @@ case "${distro}" in
         centos7)
 			dist='el7.centos'
             ;;         
-        ubuntu14)
+        ubuntu18)
 			dist='debian'
             ;;         
         *)
-            echo "Distro can be centos7 or ubunutu14"
+            echo "Distro can be centos7 or ubunutu18"
             exit 1
 esac
 
 # Install Ophidia & Services
 
-ssh-keygen -t dsa -f /home/jenkins/.ssh/id_dsa -N ""
-cat /home/jenkins/.ssh/id_dsa.pub >> /home/jenkins/.ssh/authorized_keys
+ssh-keygen -t rsa -f /home/jenkins/.ssh/id_rsa -N ""
+cat /home/jenkins/.ssh/id_rsa.pub >> /home/jenkins/.ssh/authorized_keys
 chmod 600 /home/jenkins/.ssh/authorized_keys
 
 ssh -o "StrictHostKeyChecking no" 127.0.0.1 ":"
@@ -139,6 +139,7 @@ then
 	sudo /bin/bash -c "/usr/bin/mysqld_safe --user=mysql 2>&1 > /dev/null &"
 else
 	sudo service mysql start
+	sudo mysql -u root --batch --silent -e "DROP USER 'root'@'localhost'; CREATE USER 'root'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; CREATE USER '%'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO '%'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;";
 fi
 
 echo "Start Apache"
@@ -154,7 +155,7 @@ if [ ${dist} = 'el7.centos' ]
 then
 	sudo -u munge /usr/sbin/munged
 else
-	sudo -u munge /usr/sbin/munged --force
+	sudo service munge start
 fi
 
 sudo /usr/local/ophidia/extra/sbin/slurmd
@@ -178,6 +179,7 @@ echo "password=abcd" >> /home/jenkins/.my.cnf
 if [ ${dist} != 'el7.centos' ]
 then
 	sudo service mysql restart
+	mysql -u root -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 	sleep 5
 fi
 
@@ -467,7 +469,7 @@ echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 
-execc dc "oph_deletecontainer container=jenkins;delete_type=physical;hidden=no;cwd=$cwd;"
+execc dc "oph_deletecontainer container=jenkins;cwd=$cwd;"
 execc rmf "oph_folder command=rm;path=jenkins;cwd=/;"
 execc ls "oph_list cwd=/;"
 

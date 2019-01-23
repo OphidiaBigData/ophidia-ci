@@ -1,0 +1,10 @@
+Package: ophidia-analytics-framework
+Version: **VERSION**-**RELEASE**
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libmpich-dev, libmysqlclient20, libjansson4 (>= 2.4), libxml2 (>= 2.9), libcurl4 (>= 7.57), libssl1.1 (>= 1.1.0g), ophidia-io-server, libcfitsio-dev, libhdf5-mpich-100, liblzma5, zlib1g, libgsl23 (>=2.4), libgslcblas0 (>=2.4)
+Maintainer: Ophidia Team <ophidia-info@cmcc.it>
+Homepage: http://ophidia.cmcc.it
+Description: Ophidia Analytics Framework
+ Ophidia framework module with analytics operators. Parallel NetCDF support enabled.
