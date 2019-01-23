@@ -177,6 +177,7 @@ echo "password=abcd" >> /home/jenkins/.my.cnf
 if [ ${dist} != 'el7.centos' ]
 then
 	sudo service mysql restart
+	mysql -u root -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 	sleep 5
 fi
 
