@@ -76,8 +76,6 @@ if [ ${dist} = 'el7.centos' ]; then
 		done
 	fi
 
-	sleep 1000
-
 	#Move new RPMS
 	mv ${pkg_path}/rpmbuild/RPMS/x86_64/*.rpm /usr/local/ophidia/pkg
 	rm -rf ${pkg_path}/rpmbuild

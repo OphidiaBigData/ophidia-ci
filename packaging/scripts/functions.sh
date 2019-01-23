@@ -36,7 +36,6 @@ function build {
 	cd ${pkg_path}/sources/$1/${repo_name}
 
 	git checkout $1
-	git checkout fix-gsoap
 
 	#Get version
 	get_version
