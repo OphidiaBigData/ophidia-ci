@@ -20,14 +20,27 @@
 
 set -e
 
-if [ $# -ne 2 ]
+if [ $# -ne 3 ]
 then
-        echo "The following arguments are required: buildtype (master, devel, etc.), workspace (where there are the sources)"
+        echo "The following arguments are required: buildtype (master, devel, etc.), workspace (where there are the sources), distro (centos7, ubuntu18)"
         exit 1
 fi
 
 buildtype=$1
 WORKSPACE=$2
+distro=$3
+
+case "${distro}" in
+        centos7)
+			dist='el7.centos'
+            ;;         
+        ubuntu18)
+			dist='debian'
+            ;;         
+        *)
+            echo "Distro can be centos7 or ubunutu18"
+            exit 1
+esac
 
 # Unit test for Ophidia Server
 
@@ -35,7 +48,12 @@ cd $WORKSPACE
 git checkout ${buildtype}
 
 ./bootstrap
-./configure --prefix=/usr/local/ophidia/oph-server --with-framework-path=/usr/local/ophidia/oph-cluster/oph-analytics-framework --with-soapcpp2-path=/usr/local/ophidia/extra --enable-webaccess --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia --with-matheval-path=/usr/local/ophidia/extra/lib --with-cjose-path=/usr/local/ophidia/extra/lib --enable-code-coverage > /dev/null
+if [ ${dist} = 'el7.centos' ]
+then
+    ./configure --prefix=/usr/local/ophidia/oph-server --with-framework-path=/usr/local/ophidia/oph-cluster/oph-analytics-framework --with-soapcpp2-path=/usr/local/ophidia/extra --enable-webaccess --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia  --with-matheval-path=/usr/local/ophidia/extra/lib --with-cjose-path=/usr/local/ophidia/extra/lib  --enable-code-coverage > /dev/null
+else
+    ./configure --prefix=/usr/local/ophidia/oph-server --with-framework-path=/usr/local/ophidia/oph-cluster/oph-analytics-framework --with-soapcpp2-path=/usr/local/ophidia/extra --enable-webaccess --with-web-server-path=/var/www/html/ophidia --with-web-server-url=http://127.0.0.1/ophidia  --with-matheval-path=/usr/lib/x86_64-linux-gnu --with-cjose-path=/usr/local/ophidia/extra/lib  --enable-code-coverage > /dev/null
+fi
 make -s > /dev/null
 
 make check > /dev/null

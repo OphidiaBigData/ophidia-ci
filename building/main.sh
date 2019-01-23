@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if [ $# -lt 1 ]
+if [ $# -lt 2 ]
 then
         echo "The following arguments are required: buildtype (master, devel, etc.), distro (centos7, ubuntu18)"
         echo "The following arguments are optional: package (terminal, primitives, io-server, server or analytics-framework)"
