@@ -28,7 +28,7 @@ set -e
 
 if [ $# -lt 6 ]
 then
-        echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu14), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
+        echo "The following arguments are required: workspace (where there are the sources), distro (centos7, ubuntu18), base url of pkg repository, file name to be downloaded (without the extension .zip), link to a NC file used for test (with dimensions lat|lon|time), variable to be imported"
         echo "The following arguments are optional: ioserver (mysql ophidiaio) sleeping period (0 by default)"
         exit 1
 fi
@@ -48,11 +48,11 @@ case "${distro}" in
         centos7)
 			dist='el7.centos'
             ;;         
-        ubuntu14)
+        ubuntu18)
 			dist='debian'
             ;;         
         *)
-            echo "Distro can be centos7 or ubunutu14"
+            echo "Distro can be centos7 or ubunutu18"
             exit 1
 esac
 
@@ -152,7 +152,7 @@ if [ ${dist} = 'el7.centos' ]
 then
 	sudo -u munge /usr/sbin/munged
 else
-	sudo -u munge /usr/sbin/munged --force
+	sudo service munge start
 fi
 
 sudo /usr/local/ophidia/extra/sbin/slurmd
@@ -447,7 +447,7 @@ echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 echo `execc dc "oph_delete cube=[measure=jenkins];ncores=$core;cwd=$cwd;"`
 
-execc dc "oph_deletecontainer container=jenkins;delete_type=physical;hidden=no;cwd=$cwd;"
+execc dc "oph_deletecontainer container=jenkins;cwd=$cwd;"
 execc rmf "oph_folder command=rm;path=jenkins;cwd=/;"
 execc ls "oph_list cwd=/;"
 
