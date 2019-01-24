@@ -37,7 +37,7 @@ case "${distro}" in
 			dist='debian'
             ;;         
         *)
-            echo "Distro can be centos7 or ubunutu18"
+            echo "Distro can be centos7 or ubuntu18"
             exit 1
 esac
 
