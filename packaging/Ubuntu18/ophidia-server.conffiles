@@ -6,3 +6,10 @@
 /usr/local/ophidia/oph-server/etc/script/oph_start.sh
 /usr/local/ophidia/oph-server/etc/script/oph_submit.sh
 /usr/local/ophidia/oph-server/etc/script/start_ioserver.sh
+/usr/local/ophidia/oph-server/authz/users.dat
+/usr/local/ophidia/oph-server/authz/admin/user.dat
+/usr/local/ophidia/oph-server/authz/framework/user.dat
+/usr/local/ophidia/oph-server/authz/oph-test/user.dat
+/usr/local/ophidia/oph-server/log/accounting-workflow.log
+/usr/local/ophidia/oph-server/log/accounting-task.log
+/var/www/html/ophidia/env.php

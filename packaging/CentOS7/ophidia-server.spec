@@ -34,6 +34,9 @@ Ophidia server, a service responsible for managing client requests and workflows
 %config(noreplace) /usr/local/ophidia/oph-server/etc/server.conf
 %config(noreplace) /usr/local/ophidia/oph-server/etc/rmanager.conf
 %config(noreplace) /usr/local/ophidia/oph-server/etc/script/*.sh
+%config(noreplace) /usr/local/ophidia/oph-server/authz/*
+%config(noreplace) /usr/local/ophidia/oph-server/log/accounting-workflow.log
+%config(noreplace) /usr/local/ophidia/oph-server/log/accounting-task.log
 /var/www/html/ophidia/env.php
 /var/www/html/ophidia/header.php
 /var/www/html/ophidia/index.php
@@ -43,6 +46,7 @@ Ophidia server, a service responsible for managing client requests and workflows
 /var/www/html/ophidia/openid.php
 /var/www/html/ophidia/userinfo.php
 /var/www/html/ophidia/aaa.php
+%config(noreplace) /var/www/html/ophidia/env.php
 %dir /var/www/html/ophidia/sessions
 
 %post
