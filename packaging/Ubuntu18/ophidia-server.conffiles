@@ -7,7 +7,6 @@
 /usr/local/ophidia/oph-server/etc/script/oph_submit.sh
 /usr/local/ophidia/oph-server/etc/script/start_ioserver.sh
 /usr/local/ophidia/oph-server/authz/users.dat
-/usr/local/ophidia/oph-server/authz/admin/user.dat
-/usr/local/ophidia/oph-server/authz/framework/user.dat
-/usr/local/ophidia/oph-server/authz/oph-test/user.dat
+/usr/local/ophidia/oph-server/authz/sessions
+/usr/local/ophidia/oph-server/authz/users
 /var/www/html/ophidia/env.php
