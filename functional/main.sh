@@ -193,9 +193,7 @@ partition="main"
 echo "Load Ophidia DB"
 echo "create database ophidiadb;" | mysql -u root
 echo "create database oph_dimensions;" | mysql -u root
-echo "Loading main DB..."
 mysql -u root ophidiadb < /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/ophidiadb.sql
-echo "Main DB loaded"
 echo "INSERT INTO host (hostname, cores, memory) VALUES ('127.0.0.1', 1, 1);" | mysql -u root ophidiadb
 echo "INSERT INTO hostpartition (partitionname) VALUES ('${partition}');" | mysql -u root ophidiadb
 echo "INSERT INTO hashost (idhostpartition,idhost) VALUES (1,1);" | mysql -u root ophidiadb
