@@ -5,7 +5,7 @@ USER root
 
 RUN yum -y update
 RUN yum -y install epel-release
-RUN yum -y install http://repo.mysql.com/mysql-community-release-el7-7.noarch.rpm
+RUN yum -y install http://repo.mysql.com/mysql57-community-release-el7.rpm
     
 RUN yum -y groupinstall 'development tools'
 
