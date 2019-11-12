@@ -207,6 +207,7 @@ sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
 
 if [ "$USEVALGRIND" == "yes" ]
 then
+	echo "Use valgrind"
 	valgrind --leak-check=full /usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
 else
 	/usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
@@ -226,6 +227,10 @@ sleep 10
 echo "Initial server trace begin"
 cat /usr/local/ophidia/oph-server/log/trace.log
 echo "Initial server trace end"
+
+echo "Server log begin"
+cat /usr/local/ophidia/oph-server/log/server.log
+echo "Server log end"
 
 # Init environment for tests
 
