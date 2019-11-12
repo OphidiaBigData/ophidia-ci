@@ -127,7 +127,7 @@ ENV PKG_CONFIG_PATH "/usr/lib64/mpich/lib/pkgconfig/:$PKG_CONFIG_PATH"
 
 RUN sudo sh -c "echo nameserver 8.8.8.8 > /etc/resolv.conf"
 
-RUN sudo mysql_install_db --user=mysql
+RUN sudo mysqld --initialize
  
 USER root
 
