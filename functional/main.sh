@@ -205,13 +205,13 @@ echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VAL
 echo "Start Ophidia Server"
 sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
 
-if [ "$USEVALGRIND" == "yes" ]
-then
-	echo "Use valgrind"
+#if [ "$USEVALGRIND" == "yes" ]
+#then
+#	echo "Use valgrind"
 	valgrind --leak-check=full /usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
-else
-	/usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
-fi
+#else
+#	/usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
+#fi
 
 # Start the Ophidia IO Server
 
