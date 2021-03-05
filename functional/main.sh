@@ -76,7 +76,6 @@ then
 
 	wget --no-check-certificate "${URL}/${PKG}.zip"
 	unzip ${PKG}.zip
-	cd ${PKG}
 
 	# install packages
 
