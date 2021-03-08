@@ -135,7 +135,17 @@ rm -rf server* root* cacert.srl
 echo "Start MySQL"
 if [ ${dist} = 'el7.centos' ]
 then
-	sudo /bin/bash -c "/usr/bin/mysqld_safe --user=mysql 2>&1 > /dev/null &"
+    echo 'port = 3307' | sudo tee -a /etc/my.cnf > /dev/null
+    sudo chmod 0444 /etc/my.cnf
+    sudo chown jenkins:jenkins /etc/my.cnf
+	sudo echo "[client]" >> /etc/my.cnf
+	sudo echo "password=abcd" >> /etc/my.cnf
+    sudo chown -R jenkins:jenkins /var/lib/mysql
+    sudo chmod -R a+w /var/lib/mysql
+    sudo chmod a+rw /var/log/mysqld.log
+    sudo chown -R jenkins:jenkins /var/run/mysqld/
+    sudo chmod -R a+rw /var/run/mysqld/
+    /usr/sbin/mysqld --user=jenkins </dev/null &
 else
 	sudo service mysql start
 	sudo mysql -u root --batch --silent -e "DROP USER 'root'@'localhost'; CREATE USER 'root'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; CREATE USER '%'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO '%'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;";
@@ -171,9 +181,7 @@ fi
 # Config services
 
 echo "Configure MySQL"
-mysqladmin -u root password 'abcd'
-echo "[client]" > /home/jenkins/.my.cnf
-echo "password=abcd" >> /home/jenkins/.my.cnf
+/usr/local/mysql/bin/mysqladmin -u root password 'abcd'
 
 mysql -u root -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 sleep 5
