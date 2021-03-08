@@ -139,8 +139,8 @@ echo "Start MySQL"
 if [ ${dist} = 'el7.centos' ]
 then
     echo 'port=3307' | sudo tee -a /etc/my.cnf > /dev/null
-	echo "[client]" | sudo tee -a /etc/my.cnf > /dev/null
-	echo "password=abcd" | sudo tee -a /etc/my.cnf > /dev/null
+#	echo "[client]" | sudo tee -a /etc/my.cnf > /dev/null
+#	echo "password=abcd" | sudo tee -a /etc/my.cnf > /dev/null
     sudo chmod 0444 /etc/my.cnf
     sudo chown jenkins:jenkins /etc/my.cnf
     sudo chown -R jenkins:jenkins /var/lib/mysql
@@ -184,7 +184,13 @@ fi
 # Config services
 
 echo "Configure MySQL"
-mysqladmin -u root password 'abcd'
+if [ ${dist} = 'debian' ]
+then
+	mysqladmin -u root -P 3307 --protocol=tcp password 'abcd'
+fi
+echo "[client]" > /home/jenkins/.my.cnf
+echo "password=abcd" >> /home/jenkins/.my.cnf
+echo "port=3307" >> /home/jenkins/.my.cnf
 
 mysql -u root -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 sleep 5
