@@ -82,7 +82,9 @@ then
 	if [ ${dist} = 'el7.centos' ]
 	then
 		sudo yum -y install ophidia-*.rpm
-	else
+	fi
+	if [ ${dist} = 'debian' ]
+	then
 		sudo dpkg -i ophidia-*.deb
 	fi
 
@@ -93,7 +95,9 @@ fi
 if [ ${dist} = 'el7.centos' ]
 then
 	sudo cp -pr /usr/local/ophidia/oph-cluster/oph-primitives/lib/liboph_*.so /usr/lib64/mysql/plugin
-else
+fi
+if [ ${dist} = 'debian' ]
+then
 	sudo cp -pr /usr/local/ophidia/oph-cluster/oph-primitives/lib/liboph_*.so /usr/lib/mysql/plugin
 fi
 
@@ -140,10 +144,9 @@ rm -rf server* root* cacert.srl
 # Start services
 
 echo "Start MySQL"
+echo 'port = 3307' | sudo tee -a /etc/my.cnf > /dev/null
 if [ ${dist} = 'el7.centos' ]
 then
-	echo 'port = 3307' | sudo tee -a /etc/my.cnf > /dev/null
-    
 	sudo chmod 0444 /etc/my.cnf
 	sudo chown jenkins:jenkins /etc/my.cnf
 	sudo chown -R jenkins:jenkins /var/lib/mysql
@@ -162,7 +165,9 @@ then
 
 	rm -f /var/lib/mysql/mysql.sock
 	/usr/sbin/mysqld --user=jenkins </dev/null &
-else
+fi
+if [ ${dist} = 'debian' ]
+then
 	sudo service mysql start
 	sudo mysql -u root --batch --silent -e "DROP USER 'root'@'localhost'; CREATE USER 'root'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; CREATE USER '%'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO '%'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;";
 fi
@@ -171,7 +176,9 @@ echo "Start Apache"
 if [ ${dist} = 'el7.centos' ]
 then
 	sudo /usr/sbin/httpd
-else
+fi
+if [ ${dist} = 'debian' ]
+then
 	sudo service apache2 start
 fi
 
@@ -179,7 +186,9 @@ echo "Start Munge"
 if [ ${dist} = 'el7.centos' ]
 then
 	sudo -u munge /usr/sbin/munged
-else
+fi
+if [ ${dist} = 'debian' ]
+then
 	sudo service munge start
 fi
 
