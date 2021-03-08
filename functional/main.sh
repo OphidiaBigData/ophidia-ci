@@ -271,11 +271,15 @@ cwd=/jenkins
 INSTALL=/usr/local/ophidia/oph-terminal/bin
 ACCESSPARAM="-H 127.0.0.1 -P 11732 -u oph-test -p abcd"
 
+
 # Use $HOME as working directory
 cd
 
+
 # Server check
+echo "Configuration Parameters"
 $INSTALL/oph_term $ACCESSPARAM -e "oph_get_config" > server_check$TIME.json
+cat server_check$TIME.json
 if [ $(grep "Configuration Parameters" server_check$TIME.json | wc -l) -gt 0 ]; then $(exit 0); else $(exit 1); fi
 
 
@@ -297,9 +301,7 @@ fi
 echo "Start functional tests"
 
 # Create test folder and test container
-execc mk "oph_folder command=mkdir;path=/jenkins;cwd=/;" &
-tail /usr/local/ophidia/oph-server/log/trace.log
-
+execc mk "oph_folder command=mkdir;path=/jenkins;cwd=/;"
 execc cc "oph_createcontainer container=jenkins;dim=lat|lon|plev|time;dim_type=double|double|double|double;hierarchy=oph_base|oph_base|oph_base|oph_time;vocabulary=CF;cwd=$cwd;"
 execc ls "oph_list cwd=$cwd;"
 
