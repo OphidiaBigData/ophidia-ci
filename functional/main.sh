@@ -204,6 +204,7 @@ sleep 5
 # Load ophidia-primitives
 
 echo "Load primitives"
+cat /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
 mysql -u root mysql < /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
 
 # Load Ophidia DB
