@@ -170,10 +170,9 @@ fi
 if [ ${dist} = 'debian' ]
 then
 	echo '[mysqld]' | sudo tee -a /etc/my.cnf > /dev/null
-	echo 'socket=/var/lib/mysql/mysql.sock' | sudo tee -a /etc/my.cnf > /dev/null
 	echo 'port = 3307' | sudo tee -a /etc/my.cnf > /dev/null
 	echo '[mysqladmin]' | sudo tee -a /etc/my.cnf > /dev/null
-	echo 'socket=/var/lib/mysql/mysql.sock' | sudo tee -a /etc/my.cnf > /dev/null
+	echo 'port = 3307' | sudo tee -a /etc/my.cnf > /dev/null
 
 	sudo service mysql start
 	sudo mysql -u root --batch --silent -e "DROP USER 'root'@'localhost'; CREATE USER 'root'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; CREATE USER '%'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO '%'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;";
