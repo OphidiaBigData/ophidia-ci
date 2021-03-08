@@ -102,6 +102,7 @@ sudo chown -R jenkins:jenkins /var/www/html/ophidia
 
 sed -i -- 's/PORT=3306/PORT=3307/g' /usr/local/ophidia/oph-server/etc/ophidiadb.conf
 sed -i -- 's/PORT=3306/PORT=3307/g' /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_configuration
+sed -i -- 's/by `%`/by `root`@`localhost`/g' /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
 
 # Re-install io-server in debug mode
 
@@ -150,18 +151,14 @@ then
 
 	rm -f /var/lib/mysql/mysql.sock
 	/usr/sbin/mysqld --user=jenkins --skip-grant-tables </dev/null &
-	while [ ! -e /var/lib/mysql/mysql.sock ]; do
-		sleep 20
-	done
+	echo "Waiting for MySQL"
+	wait_for_mysql
 	mysql -u root -e "FLUSH PRIVILEGES; ALTER USER 'root'@'localhost' IDENTIFIED BY 'abcd';"
 
 	killall mysqld
 
 	rm -f /var/lib/mysql/mysql.sock
 	/usr/sbin/mysqld --user=jenkins </dev/null &
-	while [ ! -e /var/lib/mysql/mysql.sock ]; do
-		sleep 20
-	done
 else
 	sudo service mysql start
 	sudo mysql -u root --batch --silent -e "DROP USER 'root'@'localhost'; CREATE USER 'root'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; CREATE USER '%'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO '%'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;";
