@@ -138,13 +138,30 @@ rm -rf server* root* cacert.srl
 echo "Start MySQL"
 if [ ${dist} = 'el7.centos' ]
 then
+	echo 'port = 3307' | sudo tee -a /etc/my.cnf > /dev/null
+    
+	sudo chmod 0444 /etc/my.cnf
+	sudo chown jenkins:jenkins /etc/my.cnf
+	sudo chown -R jenkins:jenkins /var/lib/mysql
+	sudo chmod -R a+w /var/lib/mysql
+	sudo chmod a+rw /var/log/mysqld.log
+	sudo chown -R jenkins:jenkins /var/run/mysqld/
+	sudo chmod -R a+rw /var/run/mysqld/
 
+	rm -f /var/lib/mysql/mysql.sock
+	/usr/sbin/mysqld --user=jenkins --skip-grant-tables </dev/null &
+	while [ ! -e /var/lib/mysql/mysql.sock ]; do
+		sleep 20
+	done
+	mysql -u root -e "FLUSH PRIVILEGES; ALTER USER 'root'@'localhost' IDENTIFIED BY 'abcd';"
 
+	killall mysqld
 
-
-
-
-
+	rm -f /var/lib/mysql/mysql.sock
+	/usr/sbin/mysqld --user=jenkins </dev/null &
+	while [ ! -e /var/lib/mysql/mysql.sock ]; do
+		sleep 20
+	done
 else
 	sudo service mysql start
 	sudo mysql -u root --batch --silent -e "DROP USER 'root'@'localhost'; CREATE USER 'root'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; CREATE USER '%'@'%' IDENTIFIED BY ''; GRANT ALL PRIVILEGES ON *.* TO '%'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;";
