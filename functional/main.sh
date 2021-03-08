@@ -102,7 +102,7 @@ sudo chown -R jenkins:jenkins /var/www/html/ophidia
 
 sed -i -- 's/PORT=3306/PORT=3307/g' /usr/local/ophidia/oph-server/etc/ophidiadb.conf
 sed -i -- 's/PORT=3306/PORT=3307/g' /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_configuration
-sed -i -- 's/by `%`/by `root`@`localhost`/g' /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
+sed -i -- 's/TO `%`/TO `root`@`localhost`/g' /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
 
 # Re-install io-server in debug mode
 
@@ -204,7 +204,6 @@ sleep 5
 # Load ophidia-primitives
 
 echo "Load primitives"
-cat /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
 mysql -u root mysql < /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
 
 # Load Ophidia DB
