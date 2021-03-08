@@ -253,6 +253,11 @@ function execc {
 	TIME=$(date +%s)
 	echo "Test $TESTN: EXEC COMMAND $2"
 	$INSTALL/oph_term $ACCESSPARAM -e "$2" 2>&1 > $1$TIME.json &
+
+
+	sleep 10
+
+
 	if [ $(grep "ERROR" $1$TIME.json | wc -l) -gt 0 ]; then cat /usr/local/ophidia/oph-server/log/server.log; cat $1$TIME.json; $(exit 1); else $(exit 0); fi
 	> /usr/local/ophidia/oph-server/log/server.log
 	let "TESTN++"
@@ -295,6 +300,19 @@ if [ $# -lt 9 ]; then
 fi
 
 
+
+
+
+tail -f /usr/local/ophidia/oph-server/log/server.log &
+watch squeue &
+
+
+
+
+
+
+
+
 # Functional tests
 
 echo "Start functional tests"
@@ -303,6 +321,27 @@ echo "Start functional tests"
 execc mk "oph_folder command=mkdir;path=/jenkins;cwd=/;"
 execc cc "oph_createcontainer container=jenkins;dim=lat|lon|plev|time;dim_type=double|double|double|double;hierarchy=oph_base|oph_base|oph_base|oph_time;vocabulary=CF;cwd=$cwd;"
 execc ls "oph_list cwd=$cwd;"
+
+exit 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Download NC file
 cd $WORKSPACE
