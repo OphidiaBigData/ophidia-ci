@@ -102,7 +102,10 @@ sudo chown -R jenkins:jenkins /var/www/html/ophidia
 
 sed -i -- 's/PORT=3306/PORT=3307/g' /usr/local/ophidia/oph-server/etc/ophidiadb.conf
 sed -i -- 's/PORT=3306/PORT=3307/g' /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_configuration
-sed -i -- 's/TO `%`/TO `root`@`localhost`/g' /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
+if [ ${dist} = 'el7.centos' ]
+then
+	sed -i -- 's/TO `%`/TO `root`@`localhost`/g' /usr/local/ophidia/oph-cluster/oph-primitives/etc/create_func.sql
+fi
 
 # Re-install io-server in debug mode
 
