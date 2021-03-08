@@ -138,8 +138,8 @@ then
     echo 'port = 3307' | sudo tee -a /etc/my.cnf > /dev/null
     sudo chmod 0444 /etc/my.cnf
     sudo chown jenkins:jenkins /etc/my.cnf
-	sudo echo "[client]" >> /etc/my.cnf
-	sudo echo "password=abcd" >> /etc/my.cnf
+	echo "[client]" >> /etc/my.cnf
+	echo "password=abcd" >> /etc/my.cnf
     sudo chown -R jenkins:jenkins /var/lib/mysql
     sudo chmod -R a+w /var/lib/mysql
     sudo chmod a+rw /var/log/mysqld.log
