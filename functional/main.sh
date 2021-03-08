@@ -253,9 +253,6 @@ function execc {
 	TIME=$(date +%s)
 	echo "Test $TESTN: EXEC COMMAND $2"
 	$INSTALL/oph_term $ACCESSPARAM -e "$2" 2>&1 > $1$TIME.json &
-
-	sleep 20
-
 	if [ $(grep "ERROR" $1$TIME.json | wc -l) -gt 0 ]; then cat /usr/local/ophidia/oph-server/log/server.log; cat $1$TIME.json; $(exit 1); else $(exit 0); fi
 	> /usr/local/ophidia/oph-server/log/server.log
 	let "TESTN++"
@@ -282,7 +279,6 @@ cd
 # Server check
 echo "Configuration Parameters"
 $INSTALL/oph_term $ACCESSPARAM -e "oph_get_config" > server_check$TIME.json
-cat server_check$TIME.json
 if [ $(grep "Configuration Parameters" server_check$TIME.json | wc -l) -gt 0 ]; then $(exit 0); else $(exit 1); fi
 
 
@@ -302,17 +298,6 @@ fi
 # Functional tests
 
 echo "Start functional tests"
-
-
-
-
-
-tail -f /usr/local/ophidia/oph-server/log/trace.log &
-
-
-
-
-
 
 # Create test folder and test container
 execc mk "oph_folder command=mkdir;path=/jenkins;cwd=/;"
