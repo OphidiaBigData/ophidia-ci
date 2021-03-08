@@ -307,7 +307,7 @@ echo "Start functional tests"
 
 
 
-tail -f /usr/local/ophidia/oph-server/log/trace.log
+tail -f /usr/local/ophidia/oph-server/log/trace.log &
 
 
 
