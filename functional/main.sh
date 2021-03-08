@@ -194,6 +194,10 @@ fi
 # Config services
 
 echo "Configure MySQL"
+if [ ${dist} = 'debian' ]
+then
+	mysqladmin -u root password 'abcd'
+fi
 echo "[client]" > /home/jenkins/.my.cnf
 echo "password=abcd" >> /home/jenkins/.my.cnf
 echo "port=3307" >> /home/jenkins/.my.cnf
