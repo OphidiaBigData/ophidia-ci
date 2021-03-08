@@ -100,6 +100,9 @@ fi
 sudo chown -R jenkins:jenkins /usr/local/ophidia
 sudo chown -R jenkins:jenkins /var/www/html/ophidia
 
+sed -i -- 's/PORT=3306/PORT=3307/g' /usr/local/ophidia/oph-server/etc/ophidiadb.conf
+sed -i -- 's/PORT=3306/PORT=3307/g' /usr/local/ophidia/oph-cluster/oph-analytics-framework/etc/oph_configuration
+
 # Re-install io-server in debug mode
 
 #mkdir -p /usr/local/ophidia/src/test
@@ -181,7 +184,7 @@ fi
 # Config services
 
 echo "Configure MySQL"
-/usr/local/mysql/bin/mysqladmin -u root password 'abcd'
+mysqladmin -u root password 'abcd'
 
 mysql -u root -e "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 sleep 5
@@ -200,7 +203,7 @@ mysql -u root ophidiadb < /usr/local/ophidia/oph-cluster/oph-analytics-framework
 echo "INSERT INTO host (hostname, cores, memory) VALUES ('127.0.0.1', 1, 1);" | mysql -u root ophidiadb
 echo "INSERT INTO hostpartition (partitionname) VALUES ('${partition}');" | mysql -u root ophidiadb
 echo "INSERT INTO hashost (idhostpartition,idhost) VALUES (1,1);" | mysql -u root ophidiadb
-echo "INSERT INTO dbmsinstance (idhost, login, password, port) VALUES (1, 'root', 'abcd', 3306);" | mysql -u root ophidiadb
+echo "INSERT INTO dbmsinstance (idhost, login, password, port) VALUES (1, 'root', 'abcd', 3307);" | mysql -u root ophidiadb
 echo "INSERT INTO dbmsinstance (idhost, login, password, port, ioservertype) VALUES (1, 'root', 'abcd', 65000, 'ophidiaio_memory');" | mysql -u root ophidiadb
 
 # Start Ophidia Server
