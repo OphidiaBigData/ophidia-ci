@@ -253,7 +253,10 @@ function execc {
 	TIME=$(date +%s)
 	echo "Test $TESTN: EXEC COMMAND $2"
 	$INSTALL/oph_term $ACCESSPARAM -e "$2" 2>&1 > $1$TIME.json &
-	less /usr/local/ophidia/oph-server/log/server.log
+
+	cat /usr/local/ophidia/oph-server/log/server.log
+	sleep 20
+
 	if [ $(grep "ERROR" $1$TIME.json | wc -l) -gt 0 ]; then cat /usr/local/ophidia/oph-server/log/server.log; cat $1$TIME.json; $(exit 1); else $(exit 0); fi
 	> /usr/local/ophidia/oph-server/log/server.log
 	let "TESTN++"
