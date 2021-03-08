@@ -297,7 +297,9 @@ fi
 echo "Start functional tests"
 
 # Create test folder and test container
-execc mk "oph_folder command=mkdir;path=/jenkins;cwd=/;"
+execc mk "oph_folder command=mkdir;path=/jenkins;cwd=/;" &
+tail /usr/local/ophidia/oph-server/log/trace.log
+
 execc cc "oph_createcontainer container=jenkins;dim=lat|lon|plev|time;dim_type=double|double|double|double;hierarchy=oph_base|oph_base|oph_base|oph_time;vocabulary=CF;cwd=$cwd;"
 execc ls "oph_list cwd=$cwd;"
 
