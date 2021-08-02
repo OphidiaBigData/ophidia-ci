@@ -45,7 +45,9 @@ RUN yum -y install \
 
 RUN pip install \
     gcovr \
-    autopep8
+    autopep8 \
+    flake \
+    black
 
 RUN yum -y install \
 	httpd \

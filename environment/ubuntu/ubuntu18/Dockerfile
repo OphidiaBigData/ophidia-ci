@@ -67,7 +67,9 @@ RUN apt-get install -y \
 
 RUN pip install \
     gcovr \
-    autopep8
+    autopep8 \
+    black \
+    flake
 
 RUN wget https://dev.mysql.com/get/mysql-apt-config_0.8.11-1_all.deb
 
