@@ -36,7 +36,7 @@ function check_folder  {
 	if [ "${1}" == "c" ]; then
 		find ${2} -name ${3} -type f -print0 | xargs -0 indent -kr -cli8 -i8 -l200
 	else
-		eval find ${2} -name ${3} -type f -print0 | xargs -0 black -t py36 --line-length 200
+		find ${2} -name ${3} -type f -print0 | xargs -0 black -t py36 --line-length 200
 	fi
 }
 
