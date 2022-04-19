@@ -127,6 +127,7 @@ if [ "${package}" == "io-server" ] || [ $# -lt 3 ]; then
 		else 
 			echo "WARNING: found $R files not compliant:"
 			git status | grep "modified" | sed -n "s/^.*modified:[ ]*//p"
+			git diff
 			$(exit 1) 
 	fi
 fi
