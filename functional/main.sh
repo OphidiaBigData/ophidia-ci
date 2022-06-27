@@ -189,6 +189,8 @@ then
 	sudo service apache2 start
 fi
 
+cp -f ${pkg_path}/etc/slurm.conf /usr/local/ophidia/extra/etc
+
 echo "Start Munge"
 if [ ${dist} = 'el7.centos' ]
 then
