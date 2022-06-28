@@ -330,8 +330,9 @@ execc cc "oph_createcontainer container=jenkins;dim=lat|lon|plev|time;dim_type=d
 execc ls "oph_list cwd=$cwd;"
 
 # Download NC file
+echo "Try to download ${NCFILE}"
 cd $WORKSPACE
-wget --no-check-certificate -O file.nc ${NCFILE} > /dev/null 2> /dev/null
+wget --no-check-certificate -O file.nc ${NCFILE} > /dev/null 2>&1
 for i in `seq 2 ${NFILE}`; do
 	cp -p file.nc file_$i.nc
 done
