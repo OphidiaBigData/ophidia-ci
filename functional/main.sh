@@ -250,15 +250,15 @@ sudo ln -s /usr/local/ophidia/extra/bin/srun /bin/srun
 
 if [ "$USEVALGRIND" == "yes" ]
 then
-	valgrind --leak-check=full /usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
+	valgrind --leak-check=full /usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 < /dev/null &
 else
-	/usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 &
+	/usr/local/ophidia/oph-server/bin/oph_server -d > /usr/local/ophidia/oph-server/log/trace.log 2>&1 < /dev/null &
 fi
 
 # Start the Ophidia IO Server
 
 echo "Start ophidia I/O Server"
-/usr/local/ophidia/oph-cluster/oph-io-server/bin/oph_io_server -i 1 -d > /dev/null 2>&1 &
+/usr/local/ophidia/oph-cluster/oph-io-server/bin/oph_io_server -i 1 -d > /dev/null 2>&1 < /dev/null &
 
 # Wait for services to start
 
