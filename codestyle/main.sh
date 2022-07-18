@@ -62,6 +62,10 @@ if [ "${package}" == "default" ]; then
 		package="server"
 	elif [[ $folder == *"terminal"* ]]; then
 		package="terminal"
+	elif [[ $folder == *"kernels"* ]]; then
+		package="kernels"
+	elif [[ $folder == *"pav-runtime"* ]]; then
+		package="pav-runtime"
 	elif [[ $folder == *"PyOphidia"* ]]; then
 		package="PyOphidia"
 	elif [[ $folder == *"wps-module"* ]]; then
@@ -203,6 +207,45 @@ if [ "${package}" == "terminal" ] || [ $# -lt 3 ]; then
 			$(exit 1) 
 	fi
 fi
+
+if [ "${package}" == "kernels" ] || [ $# -lt 3 ]; then
+
+	check_folder "c" include/ 'esdm_*.h'
+	check_folder "c" src/ 'esdm_*.c'
+
+	R=$(git status | grep "modified" | wc -l)
+	if [ $R -eq 0 ]
+		then 
+			echo "SUCCESS: all files are compliant with coding style"
+			$(exit 0) 
+		else 
+			echo "WARNING: found $R files not compliant:"
+			git status | grep "modified" | sed -n "s/^.*modified:[ ]*//p"
+			$(exit 1) 
+	fi
+fi
+
+if [ "${package}" == "pav-runtime" ] || [ $# -lt 3 ]; then
+
+	check_folder "c" src/ 'debug.h'
+	check_folder "c" src/ 'debug.c'
+	check_folder "c" src/ 'oph_*.h'
+	check_folder "c" src/ 'oph_*.c'
+	check_folder "c" src/ 'rabbitmq_*.c'
+	check_folder "c" test/ 'oph_*.c'
+
+	R=$(git status | grep "modified" | wc -l)
+	if [ $R -eq 0 ]
+		then 
+			echo "SUCCESS: all files are compliant with coding style"
+			$(exit 0) 
+		else 
+			echo "WARNING: found $R files not compliant:"
+			git status | grep "modified" | sed -n "s/^.*modified:[ ]*//p"
+			$(exit 1) 
+	fi
+fi
+
 
 if [ "${package}" == "PyOphidia" ] || [ $# -lt 3 ]; then
 
