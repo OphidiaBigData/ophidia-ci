@@ -177,6 +177,14 @@ if [ "${package}" == "server" ] || [ $# -lt 3 ]; then
 	check_folder "c" src/ 'debug.c'
 	check_folder "c" src/ 'oph_*.h'
 	check_folder "c" src/ 'oph_*.c'
+	check_folder "c" src/gsi/ 'oph_*.h'
+	check_folder "c" src/gsi/ 'oph_*.c'
+	check_folder "c" src/oph_json/ 'oph_*.h'
+	check_folder "c" src/oph_json/ 'oph_*.c'
+	check_folder "c" src/oph_workflow/ 'oph_*.h'
+	check_folder "c" src/oph_workflow/ 'oph_*.c'
+	check_folder "c" src/ssl/ 'oph_*.h'
+	check_folder "c" src/ssl/ 'oph_*.c'
 	check_folder "c" test/ 'oph_*.c'
 
 	R=$(git status | grep "modified" | wc -l)
@@ -195,6 +203,19 @@ if [ "${package}" == "terminal" ] || [ $# -lt 3 ]; then
 
 	check_folder "c" src/ 'oph_*.h'
 	check_folder "c" src/ 'oph_*.c'
+	check_folder "c" src/client/ 'oph_*.h'
+	check_folder "c" src/client/ 'oph_*.c'
+	check_folder "c" src/client/ssl/ 'oph_*.c'
+	check_folder "c" src/client/gsi/ 'oph_*.c'
+	check_folder "c" src/client/wps/ 'oph_*.c'
+	check_folder "c" src/env/ 'oph_*.h'
+	check_folder "c" src/env/ 'oph_*.c'
+	check_folder "c" src/help/ 'oph_*.h'
+	check_folder "c" src/help/ 'oph_*.c'
+	check_folder "c" src/viewer/ 'oph_*.h'
+	check_folder "c" src/viewer/ 'oph_*.c'
+	check_folder "c" src/workflow/ 'oph_*.h'
+	check_folder "c" src/workflow/ 'oph_*.c'
 
 	R=$(git status | grep "modified" | wc -l)
 	if [ $R -eq 0 ]
