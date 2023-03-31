@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-function wait_for_mysql {
+wait_for_mysql () {
 	while [ ! -e /var/lib/mysql/mysql.sock ]; do
 		sleep 10
 	done
@@ -274,7 +274,7 @@ echo "Initial server trace end"
 
 TESTN=1
 
-function execc {
+execc () {
 	TIME=$(date +%s)
 	echo "Test $TESTN: EXEC COMMAND $2"
 	$INSTALL/oph_term $ACCESSPARAM -e "$2" > $1$TIME.json 2>&1
@@ -283,7 +283,7 @@ function execc {
 	> /usr/local/ophidia/oph-server/log/server.log
 	let "TESTN++"
 }
-function execw {
+execw () {
 	TIME=$(date +%s)
 	echo "Test $TESTN: EXEC WORKFLOW $2 $3"
 	$INSTALL/oph_term $ACCESSPARAM -w "$2" -a "$3" > $1$TIME.json 2>&1
