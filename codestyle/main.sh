@@ -101,6 +101,8 @@ if [ "${package}" == "io-server" ] || [ $# -lt 3 ]; then
 	check_folder "c" src/common/ 'debug.c'
 	check_folder "c" src/common/ 'oph_*.h'
 	check_folder "c" src/common/ 'oph_*.c'
+	check_folder "c" src/common/ 'oph-*.h'
+	check_folder "c" src/common/ 'oph-*.c'
 	check_folder "c" src/devices/ '*.h'
 	check_folder "c" src/devices/ '*.c'
 	check_folder "c" src/iostorage/ 'oph_*.h'
