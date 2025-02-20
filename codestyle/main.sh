@@ -272,9 +272,7 @@ fi
 
 if [ "${package}" == "PyOphidia" ] || [ $# -lt 3 ]; then
 
-	check_folder "python" PyOphidia/ 'client.py'
-	check_folder "python" PyOphidia/ 'cube.py'
-	check_folder "python" PyOphidia/ 'ophsubmit.py'
+	check_folder "python" pyophidia/ '\[^_]*.py'
 
 	R=$(git status | grep "modified" | wc -l)
 	if [ $R -eq 0 ]
