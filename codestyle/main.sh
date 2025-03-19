@@ -37,7 +37,7 @@ function check_folder  {
 		find ${2} -name ${3} -type f -print0 | xargs -0 indent -kr -cli8 -i8 -l200
 	else
 		eval find ${2} -name ${3} -type f -print0 | xargs -0 black -t py311 --line-length 79
-		eval find ${2} -name ${3} -type f -print0 | xargs -0 flake8
+		eval find ${2} -name ${3} -type f -print0 | xargs -0 flake8 --extend-ignore E203
 	fi
 }
 
